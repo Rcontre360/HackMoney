@@ -44,12 +44,6 @@ const config: HardhatUserConfig = {
       accounts: [process.env.PRIVATE_KEY || ""],
       timeout: 100000,
     },
-    mumbai: {
-      url: "https://polygon-mumbai.g.alchemy.com/v2/nReBpq-5AlHd7Wl0MLmDtkzQj_cFpFBV",
-      accounts: ["6c411f8a85391c0f8c9a0a1e26a843da44127b0aecb29b83be1d7060025ffedb" || ""],
-      timeout: 100000,
-      //gasPrice: 65000000000,
-    },
   },
   paths: {
     artifacts: "./artifacts",
