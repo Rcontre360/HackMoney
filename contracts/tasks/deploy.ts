@@ -1,10 +1,19 @@
-import { ethers, network } from "hardhat";
-import { writeJsonFile } from "../utils";
-import CONFIG from "../utils/constants";
+import { task } from "hardhat/config";
+import { writeJsonFile } from "@utils/index";
+import { deploy } from "@utils/contracts";
+import { MockERC20, SuperTokenFactory } from "@sctypes/index";
+import CONFIG from "@utils/constants";
 
-async function main(): Promise<void> {
+task("deploySuperToken", "deploy superToken").setAction(async (taskArgs, hre) => {
+  const { ethers, network } = hre;
+  // const { protocol, fee } = taskArgs;
+  const [owner] = await ethers.getSigners();
+
   const config = CONFIG[network.name as keyof typeof CONFIG];
-  const token = await (await ethers.getContractFactory("MockToken")).deploy();
+  // const token = await (await ethers.getContractFactory("MockToken")).deploy();
+  const token = <MockERC20>await deploy(hre, "MockERC20", owner, []);
+  console.log("MockToken", token.address, config);
+
   const superTokenFactory = (await ethers.getContractFactory("SuperTokenFactory")).attach(config.superTokenFactory);
 
   const superTokenAddress = await superTokenFactory.callStatic["createERC20Wrapper"](
@@ -22,11 +31,4 @@ async function main(): Promise<void> {
       superToken: superTokenAddress,
     },
   });
-}
-
-main()
-  .then(() => process.exit(0))
-  .catch((error: Error) => {
-    console.error(error);
-    process.exit(1);
-  });
+});
