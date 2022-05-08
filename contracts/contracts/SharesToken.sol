@@ -6,7 +6,7 @@ import { SuperTokenBase } from "./utils/SuperTokenBase.sol";
 
 /// @title Burnable and Mintable Super Token
 /// @notice This does not perform checks when burning
-contract BurnMintSuperToken is SuperTokenBase, AccessControl {
+contract SharesToken is SuperTokenBase, AccessControl {
     /// @notice Minter Role
     bytes32 public constant MINTER_ROLE = keccak256("MINTER_ROLE");
 

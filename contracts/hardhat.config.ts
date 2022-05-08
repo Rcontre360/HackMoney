@@ -28,12 +28,21 @@ const config: HardhatUserConfig = {
     src: "./contracts",
   },
   networks: {
-    hardhat: {},
+    hardhat: {
+      forking: {
+        url: process.env.MUMBAI_PROVIDER || "",
+        blockNumber: 26256943,
+      },
+    },
     rinkeby: {
       url: process.env.RINKEBY_PROVIDER,
       accounts: [process.env.PRIVATE_KEY || ""],
       timeout: 100000,
-      //gasPrice: 65000000000,
+    },
+    mumbai: {
+      url: process.env.MUMBAI_PROVIDER,
+      accounts: [process.env.PRIVATE_KEY || ""],
+      timeout: 100000,
     },
     mumbai: {
       url: "https://polygon-mumbai.g.alchemy.com/v2/nReBpq-5AlHd7Wl0MLmDtkzQj_cFpFBV",
