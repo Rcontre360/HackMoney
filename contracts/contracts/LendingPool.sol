@@ -81,13 +81,17 @@ contract LendingPool is ILendingPool, Context, Ownable, SuperAppBase {
         return 0;
     }
 
-    function _forward(address to, uint256 amount) internal {
-        token.transfer(to, amount);
-        emit Forwarded(to, amount);
-    }
-
-    function _updateOutflow(bytes calldata ctx) private returns (bytes memory newCtx) {
+    function _updateFlow(bytes calldata ctx, address borrower) private returns (bytes memory newCtx) {
         newCtx = ctx;
+
+        //if user sends tokens to the contract, send him shares tokens
+        (, int96 tokenFlow, , ) = cfa.getFlow(token, borrower, address(this)); // get flowrate of token deposited
+        cfaV1.createFlowWithCtx(newCtx, borrower, sharesToken, tokenFlow); //create shares token flow for user
+
+        //if user sends burns shares, give him correct amount of liquid tokens
+        (, int96 sharesFlow, , ) = cfa.getFlow(sharesToken, borrower, address(0));
+        cfaV1.createFlowWithCtx(newCtx, address(0), sharesToken, sharesFlow); //burns tokens
+        cfaV1.createFlowWithCtx(newCtx, borrower, token, sharesFlow); //create token flow for user
     }
 
     function afterAgreementCreated(
@@ -95,31 +99,34 @@ contract LendingPool is ILendingPool, Context, Ownable, SuperAppBase {
         address _agreementClass,
         bytes32, // _agreementId,
         bytes calldata, /*_agreementData*/
-        bytes calldata, // _cbdata,
+        bytes calldata cbdata,
         bytes calldata ctx
     ) external override returns (bytes memory newCtx) {
-        newCtx = _updateOutflow(ctx);
+        address borrower = abi.decode(cbdata, (address));
+        newCtx = _updateFlow(ctx, borrower);
     }
 
     function afterAgreementUpdated(
         ISuperToken _superToken,
         address _agreementClass,
-        bytes32, // _agreementId,
-        bytes calldata, /*_agreementData*/
-        bytes calldata, // _cbdata,
+        bytes32 _agreementId,
+        bytes calldata _agreementData,
+        bytes calldata cbdata,
         bytes calldata ctx
     ) external override returns (bytes memory newCtx) {
-        newCtx = _updateOutflow(ctx);
+        address borrower = abi.decode(cbdata, (address));
+        newCtx = _updateFlow(ctx, borrower);
     }
 
     function afterAgreementTerminated(
         ISuperToken _superToken,
         address _agreementClass,
-        bytes32, // _agreementId,
-        bytes calldata, /*_agreementData*/
-        bytes calldata, // _cbdata,
+        bytes32 _agreementId,
+        bytes calldata _agreementData,
+        bytes calldata cbdata,
         bytes calldata ctx
     ) external override returns (bytes memory newCtx) {
-        newCtx = _updateOutflow(ctx);
+        address borrower = abi.decode(cbdata, (address));
+        newCtx = _updateFlow(ctx, borrower);
     }
 }
