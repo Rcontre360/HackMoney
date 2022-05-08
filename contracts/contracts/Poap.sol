@@ -47,7 +47,7 @@ contract Poap is ERC1155, AccessControl {
         uint256[] memory ids,
         uint256[] memory amounts,
         bytes memory data
-    ) internal virtual {
+    ) internal virtual override {
         require(false, "Poap:CANNOT_TRANSFER");
     }
 }
