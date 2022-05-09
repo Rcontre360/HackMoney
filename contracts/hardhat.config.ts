@@ -33,7 +33,8 @@ const config: HardhatUserConfig = {
         url: process.env.MUMBAI_PROVIDER || "",
         blockNumber: 26256943,
       },
-    },
+      timeout: 100000,
+    } as any,
     rinkeby: {
       url: process.env.RINKEBY_PROVIDER,
       accounts: [process.env.PRIVATE_KEY || ""],
