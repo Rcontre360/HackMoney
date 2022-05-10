@@ -3,8 +3,7 @@ import hre, {waffle, ethers} from "hardhat";
 const {loadFixture} = waffle;
 import {SignerWithAddress} from "@nomiclabs/hardhat-ethers/dist/src/signer-with-address";
 
-import {SharesToken} from "@sctypes/contracts";
-import {SuperToken} from "@sctypes/index";
+import { SuperToken, SharesToken } from "@sctypes/index";
 import {deploy} from "@utils/contracts";
 import {mint} from "@utils/erc20";
 import {createFlow} from "@utils/superfluid";
