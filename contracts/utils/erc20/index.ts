@@ -7,11 +7,15 @@ export const ZERO_ADDRESS = "0x0000000000000000000000000000000000000000";
 /**
  * Mint `amount` tokens for `to`
  */
-export const mint = async (token: MockERC20, to: Signer, amount: BigNumberish): Promise<void> => {
+export const mint = async (token: MockERC20, to: Signer, amount: BigNumberish, signer?: Signer): Promise<void> => {
   const address = await to.getAddress();
   const preBalance = await token.balanceOf(address);
 
-  await expect(token.mint(address, amount)).to.emit(token, "Transfer").withArgs(ZERO_ADDRESS, address, amount);
+  if (signer)
+    await expect(token.connect(signer).mint(address, amount))
+      .to.emit(token, "Transfer")
+      .withArgs(ZERO_ADDRESS, address, amount);
+  else await expect(token.mint(address, amount)).to.emit(token, "Transfer").withArgs(ZERO_ADDRESS, address, amount);
 
   const postBalance = await token.balanceOf(address);
   expect(postBalance.sub(preBalance)).to.equal(amount);
