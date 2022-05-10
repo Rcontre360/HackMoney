@@ -4,9 +4,9 @@ pragma solidity ^0.8.13;
 import { IMintableSuperToken } from "./IMintableSuperToken.sol";
 
 interface ILendingPool {
-    event Deposit(address indexed depositor, uint256 amount, uint256 shares);
+    event Deposit(address indexed depositor, uint256 amount);
 
-    event Withdraw(address indexed withdrawer, uint256 shares, uint256 amount);
+    event Withdraw(address indexed withdrawer, uint256 amount);
 
     event Forwarded(address indexed to, uint256 amount);
 

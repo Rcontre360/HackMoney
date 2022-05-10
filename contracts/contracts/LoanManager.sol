@@ -1,9 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.13;
 
-import { SafeERC20 } from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import { Context } from "@openzeppelin/contracts/utils/Context.sol";
-import { ERC20 } from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import { AccessControl } from "@openzeppelin/contracts/access/AccessControl.sol";
 
 import { ISuperfluid, ISuperToken, ISuperApp, ISuperAgreement, SuperAppDefinitions } from "@superfluid-finance/ethereum-contracts/contracts/interfaces/superfluid/ISuperfluid.sol";
@@ -11,33 +9,26 @@ import { CFAv1Library } from "@superfluid-finance/ethereum-contracts/contracts/a
 import { IConstantFlowAgreementV1 } from "@superfluid-finance/ethereum-contracts/contracts/interfaces/agreements/IConstantFlowAgreementV1.sol";
 import { SuperAppBase } from "@superfluid-finance/ethereum-contracts/contracts/apps/SuperAppBase.sol";
 
-import { IMintableSuperToken } from "./interfaces/IMintableSuperToken.sol";
-import { ILendingPool } from "./interfaces/ILendingPool.sol";
 import { ILoanManager } from "./interfaces/ILoanManager.sol";
+import { ILendingPool } from "./interfaces/ILendingPool.sol";
 import { IERC20Decimals } from "./interfaces/IERC20Decimals.sol";
 
-contract LendingPool is ILendingPool, Context, AccessControl, SuperAppBase {
-    using SafeERC20 for IMintableSuperToken;
+contract LoanManager is ILoanManager, Context, AccessControl, SuperAppBase {
     using CFAv1Library for CFAv1Library.InitData;
 
-    bytes32 public constant DEPOSITOR_ROLE = keccak256("DEPOSITOR_ROLE");
     bytes32 public constant MANAGER_ROLE = keccak256("MANAGER_ROLE");
 
     CFAv1Library.InitData public cfaV1;
     ISuperfluid public host;
     IConstantFlowAgreementV1 public cfa;
 
-    IMintableSuperToken public token;
-    ILoanManager public loanManager;
+    mapping(uint256 => LoanData) public loans;
+    ILendingPool public lendingPool;
+    uint256 public loanId;
 
-    constructor(
-        IMintableSuperToken _token,
-        ILoanManager _loanManager,
-        ISuperfluid _host
-    ) {
-        token = _token;
+    constructor(ISuperfluid _host, ILendingPool _lendingPool) {
         host = _host;
-        loanManager = _loanManager;
+        lendingPool = _lendingPool;
 
         cfa = IConstantFlowAgreementV1(
             address(host.getAgreementClass(keccak256("org.superfluid-finance.agreements.ConstantFlowAgreement.v1")))
@@ -52,44 +43,22 @@ contract LendingPool is ILendingPool, Context, AccessControl, SuperAppBase {
         _setupRole(DEFAULT_ADMIN_ROLE, msg.sender);
     }
 
-    function deposit(uint256 amount) external onlyRole(DEPOSITOR_ROLE) {
-        require(amount > 0, "LendingPool: AMOUNT_ZERO");
-        address sender = _msgSender();
-
-        token.safeTransferFrom(sender, address(this), amount);
-        emit Deposit(sender, amount);
-    }
-
-    function withdraw(uint256 amount) external onlyRole(DEPOSITOR_ROLE) {
-        address sender = _msgSender();
-        uint256 funds = token.balanceOf(address(this));
-
-        token.safeTransfer(sender, amount);
-        emit Withdraw(sender, amount);
-    }
-
+    //TODO create loan data, create flowrate towards lending pool
     function createLoan(
         uint256 principal,
         int96 flowRate,
         uint256 repaymentDuration,
         address borrower
     ) external onlyRole(MANAGER_ROLE) {
-        token.safeTransfer(borrower, principal);
-        loanManager.createLoan(principal, flowRate, repaymentDuration, borrower);
+        loans[loanId] = LoanData(principal, flowRate, block.timestamp, repaymentDuration, borrower, LoanStatus.Issued);
+        cfa.createFlowByOperator(lendingPool.token(), borrower, address(lendingPool), flowRate, "0x");
     }
 
-    function sharesGivenAmount(uint256 amount) public view returns (uint256) {
-        uint256 _totalSupply = token.totalSupply();
-        return _totalSupply;
-    }
-
-    function value() public view returns (uint256) {
-        return token.balanceOf(address(this)) + unpaidAmount();
-    }
-
-    function unpaidAmount() public view returns (uint256) {
-        //TODO finish unpaid amount calculation
-        return 0;
+    function finisRepayment(uint256 loanId) external {
+        LoanData memory loan = loans[loanId];
+        require(loan.startDate + loan.repaymentDuration < block.timestamp, "LoanManager:REPAYMENT_UNFINISHED");
+        loan.status = LoanStatus.Repaid;
+        cfa.deleteFlowByOperator(lendingPool.token(), loan.borrower, address(lendingPool), "0x");
     }
 
     function afterAgreementCreated(
@@ -101,7 +70,6 @@ contract LendingPool is ILendingPool, Context, AccessControl, SuperAppBase {
         bytes calldata ctx
     ) external override returns (bytes memory newCtx) {
         address borrower = abi.decode(cbdata, (address));
-        _checkRole(DEPOSITOR_ROLE, borrower);
         newCtx = ctx;
     }
 
@@ -114,7 +82,6 @@ contract LendingPool is ILendingPool, Context, AccessControl, SuperAppBase {
         bytes calldata ctx
     ) external override returns (bytes memory newCtx) {
         address borrower = abi.decode(cbdata, (address));
-        _checkRole(DEPOSITOR_ROLE, borrower);
         newCtx = ctx;
     }
 
@@ -127,7 +94,6 @@ contract LendingPool is ILendingPool, Context, AccessControl, SuperAppBase {
         bytes calldata ctx
     ) external override returns (bytes memory newCtx) {
         address borrower = abi.decode(cbdata, (address));
-        _checkRole(DEPOSITOR_ROLE, borrower);
         newCtx = ctx;
     }
 }

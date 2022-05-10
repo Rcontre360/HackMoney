@@ -49,8 +49,10 @@ describe("SharesToken", () => {
       const mintAmount = ethers.utils.parseEther("10");
 
       await mint(sharesToken as any, other, mintAmount);
+
       expect(otherBalance).to.be.equal("0");
-      expect(await sharesToken.balanceOf(other.address)).to.be.equal("0");
+      expect(await mint(sharesToken as any, other, mintAmount, other)).to.be.revertedWith("");
+      expect(await sharesToken.balanceOf(other.address)).to.be.equal(mintAmount);
     });
   });
 
