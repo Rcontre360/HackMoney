@@ -28,13 +28,7 @@ const config: HardhatUserConfig = {
     src: "./contracts",
   },
   networks: {
-    hardhat: {
-      forking: {
-        url: process.env.MUMBAI_PROVIDER || "",
-        blockNumber: 26256943,
-      },
-      timeout: 100000,
-    } as any,
+    hardhat: {},
     rinkeby: {
       url: process.env.RINKEBY_PROVIDER,
       accounts: [process.env.PRIVATE_KEY || ""],
@@ -44,6 +38,12 @@ const config: HardhatUserConfig = {
       url: process.env.MUMBAI_PROVIDER,
       accounts: [process.env.PRIVATE_KEY || ""],
       timeout: 100000,
+    },
+    ganache: {
+      url: "http://127.0.0.1:8545",
+      accounts: {
+        mnemonic: process.env.GANACHE_MNEMONIC,
+      },
     },
   },
   paths: {

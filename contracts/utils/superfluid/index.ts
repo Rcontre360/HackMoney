@@ -1,3 +1,5 @@
+import {expect} from "chai";
+import {Framework} from "@superfluid-finance/sdk-core";
 import {HardhatRuntimeEnvironment} from "hardhat/types";
 import {SignerWithAddress} from "@nomiclabs/hardhat-ethers/signers";
 import {BigNumberish} from "ethers";
@@ -11,50 +13,90 @@ import {getNetworkConfig} from "@utils/network";
 import {attach} from "@utils/contracts";
 import {MockERC20} from "@sctypes/index";
 
+const deployFramework = require("@superfluid-finance/ethereum-contracts/scripts/deploy-framework");
+
 export const createFlow = async (
-  hardhat: HardhatRuntimeEnvironment,
+  hre: HardhatRuntimeEnvironment,
   {
     superToken,
     receiver,
     flowRate,
     sender,
-  }: {superToken: SuperToken; receiver: SignerWithAddress; sender: SignerWithAddress; flowRate: BigNumberish},
+    superfluid,
+  }: {
+    superToken: SuperToken;
+    receiver: SignerWithAddress | string;
+    sender: SignerWithAddress;
+    flowRate: BigNumberish;
+    superfluid: Framework;
+  },
 ) => {
-  const {network} = hardhat;
-  const {addresses} = getNetworkConfig(network.name as any) as any;
-  const host = <Superfluid>await attach(hardhat, "Superfluid", addresses.host);
-  const cfa = <ConstantFlowAgreementV1>await attach(hardhat, "ConstantFlowAgreementV1", addresses.cfa);
-  const callData = cfa.interface.encodeFunctionData("createFlow", [superToken.address, receiver.address, flowRate, []]);
+  const {
+    cfaV1: {address: cfaAddress},
+    host: {address: hostAddress},
+  } = superfluid.contracts;
+  const host = <Superfluid>await attach(hre, "Superfluid", hostAddress);
+  const cfa = <ConstantFlowAgreementV1>await attach(hre, "ConstantFlowAgreementV1", cfaAddress);
 
-  const receipt = await host.connect(sender).callAgreement(addresses.cfa, callData, [], {gasLimit: 3000000});
+  const finalReceiver = typeof receiver === "string" ? receiver : receiver.address;
+  const callData = cfa.interface.encodeFunctionData("createFlow", [superToken.address, finalReceiver, flowRate, []]);
+
+  const receipt = await host.connect(sender).callAgreement(cfaAddress, callData, "0x");
+  const flow = await cfa.getFlow(superToken.address, sender.address, finalReceiver);
+
+  expect(flow.flowRate, "Flow not created").to.be.equal(flowRate);
+
   return receipt;
 };
 
 export const upgradeToken = async (
   hardhat: HardhatRuntimeEnvironment,
-  {token, superToken, amount}: {token: string; superToken: string; amount: string},
+  {token, superToken, amount}: {token: MockERC20; superToken: SuperToken; amount: BigNumberish},
 ) => {
-  const superTkn = <SuperToken>await attach(hardhat, "MockSuperToken", superToken);
-  const tkn = <MockERC20>await attach(hardhat, "MockToken", token);
-
-  await tkn.approve(superToken, amount);
-  await superTkn.upgrade(amount);
+  await token.approve(superToken.address, amount);
+  await superToken.upgrade(amount);
 };
 
-export const createSuperToken = async (hardhat: HardhatRuntimeEnvironment, {baseToken}: {baseToken: string}) => {
-  const {network} = hardhat;
-  const {addresses} = getNetworkConfig(network.name as any) as any;
+export const createSuperToken = async (
+  hre: HardhatRuntimeEnvironment,
+  {token, superfluid}: {token: MockERC20; superfluid: Framework},
+) => {
+  const {
+    host: {address: hostAddress},
+  } = superfluid.contracts;
+
+  const host = <Superfluid>await attach(hre, "Superfluid", hostAddress);
   const superTokenFactory = <SuperTokenFactory>(
-    await attach(hardhat, "MockSuperTokenFactory", addresses.superTokenFactory)
+    await attach(hre, "SuperTokenFactory", await host.getSuperTokenFactory())
   );
   const superTokenAddress = await superTokenFactory.callStatic["createERC20Wrapper(address,uint8,string,string)"](
-    baseToken,
+    token.address,
     1,
     "Super mock",
     "SMT",
   );
 
-  await superTokenFactory["createERC20Wrapper(address,uint8,string,string)"](baseToken, 1, "Super mock", "SMT");
+  await superTokenFactory["createERC20Wrapper(address,uint8,string,string)"](token.address, 1, "Super mock", "SMT");
+  return <SuperToken>await attach(hre, "SuperToken", superTokenAddress);
+};
 
-  return <SuperToken>await attach(hardhat, "SuperToken", superTokenAddress);
+export const deployEnvironment = async (hre: HardhatRuntimeEnvironment, signer: SignerWithAddress) => {
+  const errorHandler = (err: Error) => {
+    if (err) throw err;
+  };
+
+  await deployFramework(errorHandler, {
+    web3: hre.web3,
+    from: signer.address,
+  });
+
+  const sf = await Framework.create({
+    networkName: "custom",
+    provider: hre.ethers,
+    dataMode: "WEB3_ONLY",
+    resolverAddress: process.env.TEST_RESOLVER, //this is how you get the resolver address
+    protocolReleaseVersion: "test",
+  });
+
+  return sf;
 };

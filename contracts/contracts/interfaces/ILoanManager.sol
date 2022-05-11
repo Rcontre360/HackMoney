@@ -19,10 +19,14 @@ interface ILoanManager {
         LoanStatus status;
     }
 
+    event DepositSuperfluid(uint256 flowRate);
+
     function createLoan(
         uint256 principal,
         int96 flowRate,
         uint256 repaymentDuration,
-        address borrower
+        address borrower,
+        address receiver,
+        address token
     ) external;
 }

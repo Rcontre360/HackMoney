@@ -75,7 +75,7 @@ contract LendingPool is ILendingPool, Context, AccessControl, SuperAppBase {
         address borrower
     ) external onlyRole(MANAGER_ROLE) {
         token.safeTransfer(borrower, principal);
-        loanManager.createLoan(principal, flowRate, repaymentDuration, borrower);
+        loanManager.createLoan(principal, flowRate, repaymentDuration, borrower, address(this), address(token));
     }
 
     function sharesGivenAmount(uint256 amount) public view returns (uint256) {
