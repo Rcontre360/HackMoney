@@ -49,10 +49,58 @@ export const createFlow = async (
   return receipt;
 };
 
-export const upgradeToken = async (
-  hardhat: HardhatRuntimeEnvironment,
-  {token, superToken, amount}: {token: MockERC20; superToken: SuperToken; amount: BigNumberish},
+export const approveFlow = async (
+  hre: HardhatRuntimeEnvironment,
+  {
+    sender,
+    manager,
+    superToken,
+    flowRate,
+    superfluid,
+  }: {
+    sender: SignerWithAddress;
+    manager: string;
+    superToken: SuperToken;
+    flowRate: BigNumberish;
+    superfluid: Framework;
+  },
 ) => {
+  const {
+    cfaV1: {address: cfaAddress},
+    host: {address: hostAddress},
+  } = superfluid.contracts;
+  const host = <Superfluid>await attach(hre, "Superfluid", hostAddress);
+  const cfa = <ConstantFlowAgreementV1>await attach(hre, "ConstantFlowAgreementV1", cfaAddress);
+  let callData: string = "";
+
+  if (flowRate > 0)
+    callData = cfa.interface.encodeFunctionData("updateFlowOperatorPermissions", [
+      superToken.address,
+      manager,
+      1,
+      flowRate,
+      [],
+    ]);
+  else
+    callData = cfa.interface.encodeFunctionData("authorizeFlowOperatorWithFullControl", [
+      superToken.address,
+      manager,
+      [],
+    ]);
+
+  const receipt = await host.connect(sender).callAgreement(cfaAddress, callData, "0x");
+  return receipt;
+};
+
+export const upgradeToken = async ({
+  token,
+  superToken,
+  amount,
+}: {
+  token: MockERC20;
+  superToken: SuperToken;
+  amount: BigNumberish;
+}) => {
   await token.approve(superToken.address, amount);
   await superToken.upgrade(amount);
 };

@@ -21,6 +21,7 @@ contract LoanManager is ILoanManager, Context, AccessControl, SuperAppBase {
     CFAv1Library.InitData public cfaV1;
     ISuperfluid public host;
     IConstantFlowAgreementV1 public cfa;
+    ISuperToken public token;
 
     mapping(uint256 => LoanData) public loans;
     uint256 public loanId;
@@ -30,8 +31,9 @@ contract LoanManager is ILoanManager, Context, AccessControl, SuperAppBase {
         _;
     }
 
-    constructor(ISuperfluid _host) {
+    constructor(ISuperfluid _host, ISuperToken _token) {
         host = _host;
+        token = _token;
 
         cfa = IConstantFlowAgreementV1(
             address(host.getAgreementClass(keccak256("org.superfluid-finance.agreements.ConstantFlowAgreement.v1")))
@@ -56,49 +58,34 @@ contract LoanManager is ILoanManager, Context, AccessControl, SuperAppBase {
         address token
     ) external onlyRole(MANAGER_ROLE) {
         loans[loanId] = LoanData(principal, flowRate, block.timestamp, repaymentDuration, borrower, LoanStatus.Issued);
-        cfa.createFlowByOperator(ISuperToken(token), borrower, receiver, flowRate, "0x");
-    }
-
-    function beforeAgreementCreated(
-        ISuperToken, /*superToken*/
-        address, /*agreementClass*/
-        bytes32, /*agreementId*/
-        bytes calldata, /*agreementData*/
-        bytes calldata ctx
-    )
-        external
-        view
-        virtual
-        override
-        returns (
-            bytes memory /*cbdata*/
-        )
-    {
-        return abi.encode(false);
-    }
-
-    function beforeAgreementTerminated(
-        ISuperToken superToken,
-        address agreementClass,
-        bytes32, /*agreementId*/
-        bytes calldata, /*agreementData*/
-        bytes calldata /*ctx*/
-    ) external view override onlyHost returns (bytes memory cbdata) {
-        return abi.encode(false);
+        host.callAgreement(
+            cfa,
+            abi.encodeWithSelector(
+                cfa.createFlowByOperator.selector,
+                token,
+                borrower,
+                receiver,
+                flowRate,
+                new bytes(0)
+            ),
+            "0x"
+        );
+        emit CreateLoan(loanId);
+        loanId++;
     }
 
     function afterAgreementCreated(
         ISuperToken _superToken,
         address _agreementClass,
-        bytes32, // _agreementId,
+        bytes32 _agreementId,
         bytes calldata, /*_agreementData*/
         bytes calldata cbdata,
         bytes calldata ctx
     ) external override onlyHost returns (bytes memory newCtx) {
-        //address borrower = abi.decode(cbdata, (address));
-        //require(hasRole(MANAGER_ROLE, borrower), "NOT_ALLOWED");
+        address borrower = host.decodeCtx(ctx).msgSender;
+        (, int96 flowRate, , ) = cfa.getFlow(token, borrower, address(this));
 
-        emit DepositSuperfluid(100);
+        emit DepositSuperfluid(flowRate);
         newCtx = ctx;
     }
 
@@ -110,11 +97,11 @@ contract LoanManager is ILoanManager, Context, AccessControl, SuperAppBase {
         bytes calldata cbdata,
         bytes calldata ctx
     ) external override onlyHost returns (bytes memory newCtx) {
-        //address borrower = abi.decode(cbdata, (address));
-        //require(hasRole(MANAGER_ROLE, borrower), "NOT_ALLOWED");
+        address borrower = host.decodeCtx(ctx).msgSender;
+        (, int96 flowRate, , ) = cfa.getFlow(token, borrower, address(this));
 
         newCtx = ctx;
-        emit DepositSuperfluid(100);
+        emit DepositSuperfluid(flowRate);
     }
 
     function afterAgreementTerminated(
@@ -125,10 +112,10 @@ contract LoanManager is ILoanManager, Context, AccessControl, SuperAppBase {
         bytes calldata cbdata,
         bytes calldata ctx
     ) external override onlyHost returns (bytes memory newCtx) {
-        address borrower = abi.decode(cbdata, (address));
-        //require(hasRole(MANAGER_ROLE, borrower), "NOT_ALLOWED");
+        address borrower = host.decodeCtx(ctx).msgSender;
+        (, int96 flowRate, , ) = cfa.getFlow(token, borrower, address(this));
 
         newCtx = ctx;
-        emit DepositSuperfluid(100);
+        emit DepositSuperfluid(flowRate);
     }
 }

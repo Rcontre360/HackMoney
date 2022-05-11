@@ -19,7 +19,8 @@ interface ILoanManager {
         LoanStatus status;
     }
 
-    event DepositSuperfluid(uint256 flowRate);
+    event DepositSuperfluid(int96 flowRate);
+    event CreateLoan(uint256 loanId);
 
     function createLoan(
         uint256 principal,
