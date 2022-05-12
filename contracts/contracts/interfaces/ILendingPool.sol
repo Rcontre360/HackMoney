@@ -1,16 +1,16 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.13;
 
-import { IMintableSuperToken } from "./IMintableSuperToken.sol";
+import { ISuperToken } from "@superfluid-finance/ethereum-contracts/contracts/interfaces/superfluid/ISuperfluid.sol";
 
 interface ILendingPool {
     event Deposit(address indexed depositor, uint256 amount);
 
+    event DepositSuperfluid(address indexed depositor, int96 flowRate);
+
     event Withdraw(address indexed withdrawer, uint256 amount);
 
-    event Forwarded(address indexed to, uint256 amount);
-
-    function token() external view returns (IMintableSuperToken);
+    function token() external view returns (ISuperToken);
 
     function deposit(uint256 amount) external;
 
@@ -19,6 +19,4 @@ interface ILendingPool {
     function sharesGivenAmount(uint256 amount) external view returns (uint256);
 
     function value() external view returns (uint256);
-
-    function unpaidAmount() external view returns (uint256);
 }

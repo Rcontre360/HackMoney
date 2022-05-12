@@ -35,7 +35,7 @@ describe("LoanManager", () => {
     const amount = ethers.utils.parseEther("10000");
 
     await mint(token, accounts[0], amount);
-    await upgradeToken({token, superToken, amount});
+    await upgradeToken({token, superToken, amount, signer: accounts[0]});
     await loanManager.grantRole(await loanManager.MANAGER_ROLE(), accounts[0].address);
 
     return {

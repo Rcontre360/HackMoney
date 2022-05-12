@@ -2,7 +2,7 @@ import {expect} from "chai";
 import {Framework} from "@superfluid-finance/sdk-core";
 import {HardhatRuntimeEnvironment} from "hardhat/types";
 import {SignerWithAddress} from "@nomiclabs/hardhat-ethers/signers";
-import {BigNumberish} from "ethers";
+import {BigNumberish, Signer} from "ethers";
 
 import {Superfluid} from "@sctypes/index";
 import {ConstantFlowAgreementV1} from "@sctypes/index";
@@ -96,13 +96,15 @@ export const upgradeToken = async ({
   token,
   superToken,
   amount,
+  signer,
 }: {
   token: MockERC20;
   superToken: SuperToken;
   amount: BigNumberish;
+  signer: SignerWithAddress;
 }) => {
-  await token.approve(superToken.address, amount);
-  await superToken.upgrade(amount);
+  await token.connect(signer).approve(superToken.address, amount);
+  await superToken.connect(signer).upgrade(amount);
 };
 
 export const createSuperToken = async (
