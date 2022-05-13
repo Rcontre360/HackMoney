@@ -30,6 +30,9 @@ contract LendingPool is ILendingPool, Context, AccessControl, SuperAppBase {
     ISuperToken public token;
     ILoanManager public loanManager;
 
+    /**
+     * @dev Initializes token, loan manager and superfluid
+     */
     constructor(
         ISuperToken _token,
         ILoanManager _loanManager,
@@ -52,6 +55,10 @@ contract LendingPool is ILendingPool, Context, AccessControl, SuperAppBase {
         _setupRole(DEFAULT_ADMIN_ROLE, msg.sender);
     }
 
+    /**
+     * @dev allows the DAO deposit funds using normal ERC20 tokens
+     * @param amount amount of token to desposit
+     */
     function deposit(uint256 amount) external onlyRole(DEPOSITOR_ROLE) {
         require(amount > 0, "LendingPool: AMOUNT_ZERO");
         address sender = _msgSender();
@@ -60,6 +67,10 @@ contract LendingPool is ILendingPool, Context, AccessControl, SuperAppBase {
         emit Deposit(sender, amount);
     }
 
+    /**
+     * @dev allows the DAO withdraw funds using normal ERC20 tokens
+     * @param amount amount of token to withdraw
+     */
     function withdraw(uint256 amount) external onlyRole(DEPOSITOR_ROLE) {
         address sender = _msgSender();
         uint256 funds = token.balanceOf(address(this));
@@ -68,6 +79,13 @@ contract LendingPool is ILendingPool, Context, AccessControl, SuperAppBase {
         emit Withdraw(sender, amount);
     }
 
+    /**
+     * @dev allows the DAO create loans to members/external wallets
+     * @param principal amount received by borrower
+     * @param flowRate payment rate by borrower
+     * @param repaymentDuration flowRate duration
+     * @param borrower borrower address
+     */
     function createLoan(
         uint256 principal,
         int96 flowRate,
@@ -78,15 +96,17 @@ contract LendingPool is ILendingPool, Context, AccessControl, SuperAppBase {
         loanManager.createLoan(principal, flowRate, repaymentDuration, borrower, address(this), address(token));
     }
 
-    function sharesGivenAmount(uint256 amount) public view returns (uint256) {
-        uint256 _totalSupply = token.totalSupply();
-        return _totalSupply;
-    }
-
+    /**
+     * @dev returns total value of the pool
+     */
     function value() public view returns (uint256) {
         return token.balanceOf(address(this));
     }
 
+    /**
+     * @dev superfluid callback. Check superfluid docs. only allows the depositor to
+     * create a stream towards the contract. Because the dao must be the only depositor
+     */
     function afterAgreementCreated(
         ISuperToken _superToken,
         address _agreementClass,
@@ -103,6 +123,9 @@ contract LendingPool is ILendingPool, Context, AccessControl, SuperAppBase {
         newCtx = ctx;
     }
 
+    /**
+     * @dev superfluid callback. Check superfluid docs
+     */
     function afterAgreementUpdated(
         ISuperToken _superToken,
         address _agreementClass,
@@ -116,6 +139,9 @@ contract LendingPool is ILendingPool, Context, AccessControl, SuperAppBase {
         newCtx = ctx;
     }
 
+    /**
+     * @dev superfluid callback. Check superfluid docs
+     */
     function afterAgreementTerminated(
         ISuperToken _superToken,
         address _agreementClass,

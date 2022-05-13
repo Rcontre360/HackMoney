@@ -13,6 +13,14 @@ import { SuperAppBase } from "@superfluid-finance/ethereum-contracts/contracts/a
 import { ILoanManager } from "./interfaces/ILoanManager.sol";
 import { IERC20Decimals } from "./interfaces/IERC20Decimals.sol";
 
+/** 
+    @dev {LoanManager} manages loan data and repayment by users
+
+    Users can change their money stream into the contract. Only the LendingPool 
+    has the rights to create a loan. Once this is done the user starts the 
+    repayment of the loan. 
+ */
+
 contract LoanManager is ILoanManager, Context, AccessControl, SuperAppBase {
     using CFAv1Library for CFAv1Library.InitData;
 
@@ -31,6 +39,9 @@ contract LoanManager is ILoanManager, Context, AccessControl, SuperAppBase {
         _;
     }
 
+    /**
+     * @dev Initializes the token and the superfluid protocol conections
+     */
     constructor(ISuperfluid _host, ISuperToken _token) {
         host = _host;
         token = _token;
@@ -46,9 +57,19 @@ contract LoanManager is ILoanManager, Context, AccessControl, SuperAppBase {
 
         _host.registerApp(configWord);
         _setupRole(DEFAULT_ADMIN_ROLE, msg.sender);
+        _setupRole(MANAGER_ROLE, msg.sender);
     }
 
-    //TODO create loan data, create flowrate towards lending pool
+    /**
+     * @dev Create loan for user x. The transfer of funds towards the borrower is
+     * managed by the lending pool.
+     * @param principal amount received by borrower
+     * @param flowRate repayment flow by user
+     * @param repaymentDuration duration of flowRate
+     * @param borrower borrower, duh
+     * @param receiver receiver of flowRate. In this case is the LendingPool
+     * @param token payment/principal token
+     */
     function createLoan(
         uint256 principal,
         int96 flowRate,
@@ -74,6 +95,9 @@ contract LoanManager is ILoanManager, Context, AccessControl, SuperAppBase {
         loanId++;
     }
 
+    /**
+     * @dev Callback on superfluid agreement. Check superfluid docs
+     */
     function afterAgreementCreated(
         ISuperToken _superToken,
         address _agreementClass,
@@ -89,6 +113,9 @@ contract LoanManager is ILoanManager, Context, AccessControl, SuperAppBase {
         newCtx = ctx;
     }
 
+    /**
+     * @dev Callback on superfluid agreement. Check superfluid docs
+     */
     function afterAgreementUpdated(
         ISuperToken _superToken,
         address _agreementClass,
@@ -104,6 +131,9 @@ contract LoanManager is ILoanManager, Context, AccessControl, SuperAppBase {
         emit DepositSuperfluid(flowRate);
     }
 
+    /**
+     * @dev Callback on superfluid agreement. Check superfluid docs
+     */
     function afterAgreementTerminated(
         ISuperToken _superToken,
         address _agreementClass,

@@ -16,7 +16,5 @@ interface ILendingPool {
 
     function withdraw(uint256 shares) external;
 
-    function sharesGivenAmount(uint256 amount) external view returns (uint256);
-
     function value() external view returns (uint256);
 }
