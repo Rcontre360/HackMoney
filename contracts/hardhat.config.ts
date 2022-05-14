@@ -33,7 +33,17 @@ const config: HardhatUserConfig = {
       url: process.env.RINKEBY_PROVIDER,
       accounts: [process.env.PRIVATE_KEY || ""],
       timeout: 100000,
-      //gasPrice: 65000000000,
+    },
+    mumbai: {
+      url: process.env.MUMBAI_PROVIDER,
+      accounts: [process.env.PRIVATE_KEY || ""],
+      timeout: 100000,
+    },
+    ganache: {
+      url: "http://127.0.0.1:8545",
+      accounts: {
+        mnemonic: process.env.GANACHE_MNEMONIC,
+      },
     },
   },
   paths: {
