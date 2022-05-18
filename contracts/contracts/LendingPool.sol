@@ -84,17 +84,23 @@ contract LendingPool is ILendingPool, Proxiable, ContextUpgradeable, AccessContr
      * @dev allows the DAO create loans to members/external wallets
      * @param principal amount received by borrower
      * @param flowRate payment rate by borrower
-     * @param repaymentDuration flowRate duration
      * @param borrower borrower address
      */
     function createLoan(
         uint256 principal,
         int96 flowRate,
-        uint256 repaymentDuration,
         address borrower
     ) external onlyRole(MANAGER_ROLE) {
         token.safeTransfer(borrower, principal);
-        loanManager.createLoan(principal, flowRate, repaymentDuration, borrower, address(this), address(token));
+        loanManager.createLoan(principal, flowRate, borrower, address(this), address(token));
+    }
+
+    function markLoanAsDefaulted(uint256 loanId) external onlyRole(MANAGER_ROLE) {
+        loanManager.markLoanAsDefaulted(loanId);
+    }
+
+    function updateLoanTerms(uint256 loanId, int96 minimumFlowRate) external onlyRole(MANAGER_ROLE) {
+        loanManager.updateLoanTerms(loanId, minimumFlowRate);
     }
 
     /**
@@ -116,12 +122,16 @@ contract LendingPool is ILendingPool, Proxiable, ContextUpgradeable, AccessContr
         bytes calldata cbdata,
         bytes calldata ctx
     ) external override returns (bytes memory newCtx) {
-        address borrower = host.decodeCtx(ctx).msgSender;
-        _checkRole(DEPOSITOR_ROLE, borrower);
-        (, int96 flowRate, , ) = cfa.getFlow(token, borrower, address(this));
-
-        emit DepositSuperfluid(borrower, flowRate);
+        ISuperfluid.Context memory context = host.decodeCtx(ctx);
+        address sender = host.decodeCtx(ctx).msgSender;
+        (, int96 flowRate, , ) = cfa.getFlow(token, sender, address(this));
         newCtx = ctx;
+
+        if (hasRole(DEPOSITOR_ROLE, sender)) {
+            emit DepositSuperfluid(sender, flowRate);
+        } else {
+            uint256 loanId = abi.decode(context.userData, (uint256));
+        }
     }
 
     /**
@@ -135,9 +145,17 @@ contract LendingPool is ILendingPool, Proxiable, ContextUpgradeable, AccessContr
         bytes calldata cbdata,
         bytes calldata ctx
     ) external override returns (bytes memory newCtx) {
-        address borrower = host.decodeCtx(ctx).msgSender;
-        _checkRole(DEPOSITOR_ROLE, borrower);
+        ISuperfluid.Context memory context = host.decodeCtx(ctx);
+        address sender = host.decodeCtx(ctx).msgSender;
+        (, int96 flowRate, , ) = cfa.getFlow(token, sender, address(this));
         newCtx = ctx;
+
+        if (hasRole(DEPOSITOR_ROLE, sender)) {
+            emit DepositSuperfluid(sender, flowRate);
+        } else {
+            uint256 loanId = abi.decode(context.userData, (uint256));
+            loanManager.updateLoanTerms(loanId, flowRate);
+        }
     }
 
     /**
@@ -151,9 +169,16 @@ contract LendingPool is ILendingPool, Proxiable, ContextUpgradeable, AccessContr
         bytes calldata cbdata,
         bytes calldata ctx
     ) external override returns (bytes memory newCtx) {
-        address borrower = host.decodeCtx(ctx).msgSender;
-        _checkRole(DEPOSITOR_ROLE, borrower);
+        ISuperfluid.Context memory context = host.decodeCtx(ctx);
+        address sender = host.decodeCtx(ctx).msgSender;
+        (, int96 flowRate, , ) = cfa.getFlow(token, sender, address(this));
         newCtx = ctx;
+
+        if (hasRole(DEPOSITOR_ROLE, sender)) {
+            emit DepositSuperfluid(sender, flowRate);
+        } else {
+            uint256 loanId = abi.decode(context.userData, (uint256));
+        }
     }
 
     function _authorizeUpgrade(address) internal override onlyRole(DEFAULT_ADMIN_ROLE) {}

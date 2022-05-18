@@ -36,7 +36,7 @@ describe("LoanManager", () => {
 
     await mint(token, accounts[0], amount);
     await upgradeToken({token, superToken, amount, signer: accounts[0]});
-    await loanManager.grantRole(await loanManager.MANAGER_ROLE(), accounts[0].address);
+    await loanManager.grantRole(await loanManager.LENDING_POOL(), accounts[0].address);
 
     return {
       user: accounts[0],

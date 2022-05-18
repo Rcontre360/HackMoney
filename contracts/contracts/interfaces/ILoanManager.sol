@@ -14,13 +14,12 @@ interface ILoanManager {
     struct LoanData {
         uint256 principal;
         int96 flowRate;
+        int96 minimumFlowRate;
         uint256 startDate;
-        uint256 repaymentDuration;
         address borrower;
         LoanStatus status;
     }
 
-    event DepositSuperfluid(int96 flowRate);
     event CreateLoan(uint256 loanId);
 
     function createLoan(
@@ -31,6 +30,10 @@ interface ILoanManager {
         address receiver,
         address token
     ) external;
+
+    function markLoanAsDefaulted(uint256 loanId) external;
+
+    function updateLoanTerms(uint256 loanId, int96 minimumFlowRate) external;
 
     function initialize(ISuperfluid _host, ISuperToken _token) external;
 }
