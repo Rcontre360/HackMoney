@@ -1,0 +1,55 @@
+@import '../../../styles/calcVW.scss';
+$medida: 1920;
+
+.sectionContainer {
+	padding-top: calculate-vw(184, $medida);
+	padding-left: calculate-vw(358, $medida);
+	padding-right: calculate-vw(358, $medida);
+}
+
+.containerTable{
+	max-width: 100vw;
+}
+
+.title {
+	font-size: 24px;
+}
+
+.subtitle {
+	padding-left: calculate-vw(348, $medida);
+	padding-right: calculate-vw(348, $medida);
+}
+
+
+.imageLogo {
+	min-height: 84px;
+	min-width: 160px;
+}
+
+.paddingRow {
+	padding-left: 20px;
+	text-align: center;
+}
+
+@media (max-width: 1366px) {
+	$medida: 1366;
+	.sectionContainer {
+		padding-top: calculate-vw(184, $medida);
+		padding-left: calculate-vw(81, $medida);
+		padding-right: calculate-vw(81, $medida);
+	}
+}
+
+@media (max-width: 768px) {
+
+	.imageLogo {
+		min-height: 70px;
+		min-width: 140px;
+	}
+}
+
+@media (max-width: 414px) {
+	.paddingRow {
+		text-align: left;
+	}
+}

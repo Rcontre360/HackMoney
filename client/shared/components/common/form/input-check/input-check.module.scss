@@ -1,0 +1,55 @@
+
+
+.checkbox:checked {
+	color: white;
+	background-image: url('../../../../public/icons/check.svg');
+}
+
+// .checkbox:disabled + label {
+// 	background: var(--color-gray-5);
+// 	cursor: not-allowed;
+// }
+
+// .checkbox + label {
+// 	background: var(--color-white);
+// 	border: 1px solid var(--color-gray-5);
+// 	border-radius: 3px;
+// 	box-sizing: border-box;
+// 	cursor: pointer;
+// 	display: block;
+// 	height: 36px;
+// 	margin: auto;
+// 	overflow: hidden;
+// 	position: relative;
+// 	text-indent: -999px;
+// 	width: 36px;
+// 	border-radius: 14px;
+// }
+
+// .checkbox + label:before {
+// 	background-color: var(--color-primary);
+// 	border-radius: 2px;
+// 	bottom: 0;
+// 	content: '';
+// 	height: 14px;
+// 	left: 0;
+// 	margin: auto;
+// 	position: absolute;
+// 	right: 0;
+// 	top: 0;
+// 	transform: scale(0);
+// 	transition: all 0.4s cubic-bezier(1, 0, 0.4, 0.5);
+// 	width: 14px;
+// 	-webkit-transform: scale(0);
+// 	-webkit-transition: all 0.4s cubic-bezier(1, 0, 0.4, 0.5);
+// }
+// .checkbox:checked + label {
+// 	transition: all 0.4s;
+// 	border: 1px solid var(--color-primary);
+// }
+// .checkbox:checked + label:before {
+// 	transition: all 0.4s cubic-bezier(1, 0, 0.4, 1);
+// 	-webkit-transition: all 0.4s cubic-bezier(1, 0, 0.4, 1);
+// 	transform: scale(1);
+// 	-webkit-transform: scale(1);
+// }

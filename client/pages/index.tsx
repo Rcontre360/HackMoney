@@ -1,7 +1,8 @@
+import LandingComponent from "@shared/components/landing/LandingComponent";
 import React from "react";
 
 const Landing: React.FunctionComponent<{}> = (props) => {
-  return <div className="main"></div>;
+  return <LandingComponent />;
 };
 
 export default Landing;
