@@ -10,26 +10,25 @@ interface TestContext {
   user: SignerWithAddress;
   other: SignerWithAddress;
   accounts: SignerWithAddress[];
-  creditScore: CreditScore;
+  //creditScore: CreditScore;
 }
 
-describe.only("CreditScore", () => {
+describe("CreditScore", () => {
   const fixture = async (): Promise<TestContext> => {
     const accounts = await ethers.getSigners();
-    const creditScore = <CreditScore>await deploy(hre, "CreditScore", accounts[0], []);
+    //const creditScore = <CreditScore>await deploy(hre, "CreditScore", accounts[0], []);
 
     return {
       user: accounts[0],
       other: accounts[1],
       accounts,
-      creditScore,
+      //creditScore,
     };
   };
 
   describe("Initialization", () => {
     it("Should make request", async () => {
-      const {creditScore} = await loadFixture(fixture);
-
+      //const {creditScore} = await loadFixture(fixture);
       //const logs = getLogs(
       //creditScore,
       //await getReceipt(creditScore.testBytes(ethers.utils.arrayify("f7a5b18d-c9fb-4003-94fc-8d290aeb8e14"))),
