@@ -9,28 +9,22 @@ const Layout: React.FunctionComponent<Props> = ({children}) => {
     <>
       <nav
         className={clsx(
-          "fixed top-0 z-10 flex items-center justify-between z-50 w-full shadow-lg p-4",
-          "transition duration-500 ease-in-out"
+          "sticky top-0 flex items-center justify-between z-50 w-full shadow-lg p-4",
+          "transition duration-500 ease-in-out bg-white"
         )}
       >
-        <div className="w-full block flex">
-          <div className="text-sm lg:flex-grow flex">
-            <div className="mr-6">
+        <div className="text-primary f-24 font-black">
+          <Link href="/">ChainScore</Link>
+        </div>
+        <div className="flex">
+          <div className="text-sm flex">
+            {/* <div className="mr-6">
               <Link href="/">Link</Link>
-            </div>
-            <div className="mr-6">
-              <Link href="/">Link</Link>
-            </div>
-            <div className="mr-6">
-              <Link href="/">Link</Link>
-            </div>
-            <div className="mr-6">
-              <Link href="/">Link</Link>
-            </div>
+            </div> */}
           </div>
         </div>
       </nav>
-      <div style={{scrollBehavior: "smooth"}}>{children}</div>
+      <div style={{ scrollBehavior: "smooth" }}>{children}</div>
     </>
   );
 };

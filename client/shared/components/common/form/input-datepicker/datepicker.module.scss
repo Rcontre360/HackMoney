@@ -1,0 +1,60 @@
+
+@import '../../../../styles/calcVW.scss';
+@import '../../../../styles/variables.scss';
+$medida: 1920;
+
+/* Tooltip container */
+.tooltip {
+	top: calculate-vw(55, $medida);
+	border-bottom: 1px dotted black; /* If you want dots under the hoverable text */
+}
+
+/* Tooltip text */
+.tooltiptext {
+	visibility: hidden;
+	width: 150px;
+	background-color: rgba($color: #000000, $alpha: 0.6);
+	color: #fff;
+	text-align: center;
+	padding: 5px 0;
+	border-radius: 6px;
+
+	/* Position the tooltip text - see examples below! */
+	position: absolute;
+	top: -40px;
+	right: 20px;
+	z-index: 1;
+}
+
+/* Show the tooltip text when you mouse over the tooltip container */
+.tooltip:hover .tooltiptext {
+	visibility: visible;
+}
+
+.input {
+	padding-top: calculate-vw(21, $medida);
+	padding-bottom: calculate-vw(21, $medida);
+	padding-left: calculate-vw(20, $medida);
+	padding-right: 16px;
+	margin-top: 6px;
+	margin-bottom: 10px;
+}
+
+@media (max-width: 1600px) {
+	$medida: 1600;
+	.tooltip {
+		top: calculate-vw(50, $medida);
+	}
+}
+
+@media (max-width: 1366px) {
+	$medida: 1366;
+	.input {
+		padding-top: 9px;
+		padding-bottom: 9px;
+		padding-left: calculate-vw(20, $medida);
+	}
+	.tooltip {
+		top: 38px;
+	}
+}

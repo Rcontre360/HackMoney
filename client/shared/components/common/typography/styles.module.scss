@@ -1,0 +1,9 @@
+@import '../../../styles/variables.scss';
+.labelInput {
+	$f-18: (
+		1920px: 18px,
+		1366px: 15px,
+		768px: 15px,
+	);
+	@include poly-fluid-sizing('font-size', $f-18);
+}
