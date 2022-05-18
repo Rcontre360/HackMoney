@@ -1,22 +1,22 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.13;
 
-import "hardhat/console.sol";
 import { SafeERC20 } from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
-import { Context } from "@openzeppelin/contracts/utils/Context.sol";
+import { ContextUpgradeable } from "@openzeppelin/contracts-upgradeable/utils/ContextUpgradeable.sol";
 import { ERC20 } from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
-import { AccessControl } from "@openzeppelin/contracts/access/AccessControl.sol";
+import { AccessControlUpgradeable } from "@openzeppelin/contracts-upgradeable/access/AccessControlUpgradeable.sol";
 
 import { ISuperfluid, ISuperToken, ISuperApp, ISuperAgreement, SuperAppDefinitions } from "@superfluid-finance/ethereum-contracts/contracts/interfaces/superfluid/ISuperfluid.sol";
 import { CFAv1Library } from "@superfluid-finance/ethereum-contracts/contracts/apps/CFAv1Library.sol";
 import { IConstantFlowAgreementV1 } from "@superfluid-finance/ethereum-contracts/contracts/interfaces/agreements/IConstantFlowAgreementV1.sol";
 import { SuperAppBase } from "@superfluid-finance/ethereum-contracts/contracts/apps/SuperAppBase.sol";
 
+import { Proxiable } from "./proxy/Proxiable.sol";
 import { ILendingPool } from "./interfaces/ILendingPool.sol";
 import { ILoanManager } from "./interfaces/ILoanManager.sol";
 import { IERC20Decimals } from "./interfaces/IERC20Decimals.sol";
 
-contract LendingPool is ILendingPool, Context, AccessControl, SuperAppBase {
+contract LendingPool is ILendingPool, Proxiable, ContextUpgradeable, AccessControlUpgradeable, SuperAppBase {
     using SafeERC20 for ISuperToken;
     using CFAv1Library for CFAv1Library.InitData;
 
@@ -30,14 +30,16 @@ contract LendingPool is ILendingPool, Context, AccessControl, SuperAppBase {
     ISuperToken public token;
     ILoanManager public loanManager;
 
+    constructor() {}
+
     /**
      * @dev Initializes token, loan manager and superfluid
      */
-    constructor(
+    function initialize(
         ISuperToken _token,
         ILoanManager _loanManager,
         ISuperfluid _host
-    ) {
+    ) public initializer {
         token = _token;
         host = _host;
         loanManager = _loanManager;
@@ -153,4 +155,6 @@ contract LendingPool is ILendingPool, Context, AccessControl, SuperAppBase {
         _checkRole(DEPOSITOR_ROLE, borrower);
         newCtx = ctx;
     }
+
+    function _authorizeUpgrade(address) internal override onlyRole(DEFAULT_ADMIN_ROLE) {}
 }

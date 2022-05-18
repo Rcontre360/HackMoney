@@ -1,8 +1,8 @@
 import {expect} from "chai";
 import {Artifact, HardhatRuntimeEnvironment} from "hardhat/types";
-import {BigNumber, Contract, Signer, ContractTransaction} from "ethers";
+import {BigNumber, Contract, Signer, ContractTransaction, ContractFactory} from "ethers";
 import {ContractReceipt} from "@ethersproject/contracts";
-import {Interface, LogDescription} from "@ethersproject/abi";
+import {LogDescription} from "@ethersproject/abi";
 
 export async function deploy<T extends Contract>(
   hardhat: HardhatRuntimeEnvironment,
@@ -46,3 +46,16 @@ export const expectLogs = (logs: LogDescription[], logName: string, args: (strin
 };
 
 export const getReceipt = async (tx: Promise<ContractTransaction>) => await (await tx).wait();
+
+export async function deployBehindProxy<T extends ContractFactory>(
+  hre: HardhatRuntimeEnvironment,
+  implName: string,
+  args: any[],
+): Promise<ReturnType<T["deploy"]>> {
+  const factory = await hre.ethers.getContractFactory(implName);
+  const impl = await factory.deploy();
+  const init = (await impl.populateTransaction.initialize(...args)).data;
+  const proxy = await (await hre.ethers.getContractFactory("ERC1967Proxy")).deploy(impl.address, init);
+  const instance = factory.attach(proxy.address);
+  return instance;
+}

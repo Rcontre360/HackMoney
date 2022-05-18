@@ -1,15 +1,15 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.13;
 
-import "hardhat/console.sol";
-import { Context } from "@openzeppelin/contracts/utils/Context.sol";
-import { AccessControl } from "@openzeppelin/contracts/access/AccessControl.sol";
+import { ContextUpgradeable } from "@openzeppelin/contracts-upgradeable/utils/ContextUpgradeable.sol";
+import { AccessControlUpgradeable } from "@openzeppelin/contracts-upgradeable/access/AccessControlUpgradeable.sol";
 
 import { ISuperfluid, ISuperToken, ISuperApp, ISuperAgreement, SuperAppDefinitions } from "@superfluid-finance/ethereum-contracts/contracts/interfaces/superfluid/ISuperfluid.sol";
 import { CFAv1Library } from "@superfluid-finance/ethereum-contracts/contracts/apps/CFAv1Library.sol";
 import { IConstantFlowAgreementV1 } from "@superfluid-finance/ethereum-contracts/contracts/interfaces/agreements/IConstantFlowAgreementV1.sol";
 import { SuperAppBase } from "@superfluid-finance/ethereum-contracts/contracts/apps/SuperAppBase.sol";
 
+import { Proxiable } from "./proxy/Proxiable.sol";
 import { ILoanManager } from "./interfaces/ILoanManager.sol";
 import { IERC20Decimals } from "./interfaces/IERC20Decimals.sol";
 
@@ -21,10 +21,11 @@ import { IERC20Decimals } from "./interfaces/IERC20Decimals.sol";
     repayment of the loan. 
  */
 
-contract LoanManager is ILoanManager, Context, AccessControl, SuperAppBase {
+contract LoanManager is ILoanManager, Proxiable, ContextUpgradeable, AccessControlUpgradeable, SuperAppBase {
     using CFAv1Library for CFAv1Library.InitData;
 
     bytes32 public constant MANAGER_ROLE = keccak256("MANAGER_ROLE");
+    bytes32 public constant UPGRADER_ROLE = keccak256("UPGRADER_ROLE");
 
     CFAv1Library.InitData public cfaV1;
     ISuperfluid public host;
@@ -39,10 +40,12 @@ contract LoanManager is ILoanManager, Context, AccessControl, SuperAppBase {
         _;
     }
 
+    constructor() {}
+
     /**
      * @dev Initializes the token and the superfluid protocol conections
      */
-    constructor(ISuperfluid _host, ISuperToken _token) {
+    function initialize(ISuperfluid _host, ISuperToken _token) external initializer {
         host = _host;
         token = _token;
 
@@ -57,7 +60,6 @@ contract LoanManager is ILoanManager, Context, AccessControl, SuperAppBase {
 
         _host.registerApp(configWord);
         _setupRole(DEFAULT_ADMIN_ROLE, msg.sender);
-        _setupRole(MANAGER_ROLE, msg.sender);
     }
 
     /**
@@ -148,4 +150,6 @@ contract LoanManager is ILoanManager, Context, AccessControl, SuperAppBase {
         newCtx = ctx;
         emit DepositSuperfluid(flowRate);
     }
+
+    function _authorizeUpgrade(address) internal override onlyRole(UPGRADER_ROLE) {}
 }

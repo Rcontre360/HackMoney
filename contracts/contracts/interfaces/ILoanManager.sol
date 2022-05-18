@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.13;
 
+import { ISuperToken, ISuperfluid } from "@superfluid-finance/ethereum-contracts/contracts/interfaces/superfluid/ISuperfluid.sol";
 import { IMintableSuperToken } from "./IMintableSuperToken.sol";
 
 interface ILoanManager {
@@ -30,4 +31,6 @@ interface ILoanManager {
         address receiver,
         address token
     ) external;
+
+    function initialize(ISuperfluid _host, ISuperToken _token) external;
 }

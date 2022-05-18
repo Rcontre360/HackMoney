@@ -5,7 +5,7 @@ import {SignerWithAddress} from "@nomiclabs/hardhat-ethers/dist/src/signer-with-
 
 import {LendingPool, LoanManager, ConstantFlowAgreementV1, Superfluid} from "@sctypes/index";
 import {MockERC20, SuperToken} from "@sctypes/index";
-import {deploy, attach} from "@utils/contracts";
+import {deploy, attach, deployBehindProxy} from "@utils/contracts";
 import {mint} from "@utils/erc20";
 import {createFlow, approveFlow, createSuperToken, deployEnvironment, upgradeToken} from "@utils/superfluid";
 import {increaseTime} from "@utils/index";
@@ -29,7 +29,7 @@ describe("LoanManager", () => {
     const token = <MockERC20>await deploy(hre, "MockERC20", accounts[0], []);
     const superToken = await createSuperToken(hre, {token, superfluid});
     const loanManager = <LoanManager>(
-      await deploy(hre, "LoanManager", accounts[0], [superfluid.contracts.host.address, superToken.address])
+      await deployBehindProxy(hre, "LoanManager", [superfluid.contracts.host.address, superToken.address])
     );
 
     const amount = ethers.utils.parseEther("10000");
