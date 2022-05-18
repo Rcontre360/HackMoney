@@ -74,7 +74,6 @@ contract LendingPool is ILendingPool, Context, AccessControl, SuperAppBase {
     function withdraw(uint256 amount) external onlyRole(DEPOSITOR_ROLE) {
         address sender = _msgSender();
         uint256 funds = token.balanceOf(address(this));
-
         token.safeTransfer(sender, amount);
         emit Withdraw(sender, amount);
     }

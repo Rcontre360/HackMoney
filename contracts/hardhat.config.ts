@@ -39,12 +39,12 @@ const config: HardhatUserConfig = {
       accounts: [process.env.PRIVATE_KEY || ""],
       timeout: 100000,
     },
-    ganache: {
-      url: "http://127.0.0.1:8545",
-      accounts: {
-        mnemonic: process.env.GANACHE_MNEMONIC,
-      },
-    },
+    // ganache: {
+    //   url: "http://127.0.0.1:8545",
+    //   accounts: {
+    //     mnemonic: process.env.GANACHE_MNEMONIC,
+    //   },
+    // },
   },
   paths: {
     artifacts: "./artifacts",
