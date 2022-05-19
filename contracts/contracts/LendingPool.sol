@@ -88,11 +88,12 @@ contract LendingPool is ILendingPool, Proxiable, ContextUpgradeable, AccessContr
      */
     function createLoan(
         uint256 principal,
+        uint256 repaymentAmount,
         int96 flowRate,
         address borrower
     ) external onlyRole(MANAGER_ROLE) {
         token.safeTransfer(borrower, principal);
-        loanManager.createLoan(principal, flowRate, borrower, address(this), address(token));
+        loanManager.createLoan(principal, repaymentAmount, flowRate, borrower, address(this), address(token));
     }
 
     function markLoanAsDefaulted(uint256 loanId) external onlyRole(MANAGER_ROLE) {

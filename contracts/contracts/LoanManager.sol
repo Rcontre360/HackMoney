@@ -73,12 +73,21 @@ contract LoanManager is ILoanManager, Proxiable, ContextUpgradeable, AccessContr
      */
     function createLoan(
         uint256 principal,
+        uint256 repaymentAmount,
         int96 flowRate,
         address borrower,
         address receiver,
         address token
     ) external onlyRole(LENDING_POOL) {
-        loans[loanId] = LoanData(principal, flowRate, flowRate, block.timestamp, borrower, LoanStatus.Issued);
+        loans[loanId] = LoanData(
+            principal,
+            repaymentAmount,
+            flowRate,
+            flowRate,
+            block.timestamp,
+            borrower,
+            LoanStatus.Issued
+        );
         host.callAgreement(
             cfa,
             abi.encodeWithSelector(
@@ -97,7 +106,7 @@ contract LoanManager is ILoanManager, Proxiable, ContextUpgradeable, AccessContr
 
     function markLoanAsDefaulted(uint256 loanId) external onlyRole(LENDING_POOL) {
         LoanData memory data = loans[loanId];
-        require(data.startDate + data.repaymentDuration > block.timestamp, "LoanManager:NOT_FINISHED_REPAYMENT");
+        //require(data.startDate + data.repaymentDuration > block.timestamp, "LoanManager:NOT_FINISHED_REPAYMENT");
     }
 
     function updateLoanAllowance(uint256 loanId, int96 minimumFlowRate) external onlyRole(LENDING_POOL) {
@@ -114,14 +123,14 @@ contract LoanManager is ILoanManager, Proxiable, ContextUpgradeable, AccessContr
         require(newFlowRate > data.minimumFlowRate, "LoanManager:INVALID_FLOW_RATE");
 
         data.flowRate = newFlowRate;
-        data.duration = getRepaymentDuration(newFlowRate, data.startDate, data.repaymentAmount);
+        //data.duration = getRepaymentDuration(newFlowRate, data.startDate, data.repaymentAmount);
     }
 
     function getRepaymentDuration(
         int96 flowRate,
         uint256 startDate,
         uint256 repaymentAmount
-    ) external returns (uint256) {
+    ) public returns (uint256) {
         uint256 totalPaid = uint256(uint96(flowRate)) * (block.timestamp - startDate);
         uint256 unpaidAmount = repaymentAmount - totalPaid;
         return unpaidAmount / uint96(flowRate) + (block.timestamp - startDate);

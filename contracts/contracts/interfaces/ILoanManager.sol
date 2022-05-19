@@ -13,6 +13,7 @@ interface ILoanManager {
 
     struct LoanData {
         uint256 principal;
+        uint256 repaymentAmount;
         int96 flowRate;
         int96 minimumFlowRate;
         uint256 startDate;
@@ -24,8 +25,8 @@ interface ILoanManager {
 
     function createLoan(
         uint256 principal,
+        uint256 repaymentAmount,
         int96 flowRate,
-        uint256 repaymentDuration,
         address borrower,
         address receiver,
         address token
