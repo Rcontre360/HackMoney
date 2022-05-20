@@ -6,6 +6,13 @@
 	);
 	@include poly-fluid-sizing('line-height', $line-height);
 }
+.lh-80 {
+	// $line-height: (
+		line-height: 80px;
+		// 1024px: 35px,
+	// );
+	// @include poly-fluid-sizing('line-height', $line-height);
+}
 
 .lh-50 {
 	$line-height: (
@@ -40,11 +47,22 @@
 	$f-64: (
 		1920px: 64px,
 		768px: 64px,
-		414px: 50px,
+		375px: 60px,
 		100px: 0px,
 	);
 	@include poly-fluid-sizing('font-size', $f-64);
 }
+
+.f-58 {
+	$f-64: (
+		1920px: 58px,
+		768px: 58px,
+		375px: 50px,
+		100px: 0px,
+	);
+	@include poly-fluid-sizing('font-size', $f-64);
+}
+
 
 .f-52 {
 	$f-52: (

@@ -49,7 +49,7 @@ export const PoolFormComponent: React.FC = () => {
   return (
     <div
       className={clsx(
-        "relative w-full flex flex-col items-center justify-center pt-20"
+        "relative w-full flex flex-col items-center justify-center pt-20 min-h-screen"
       )}
     >
       <div

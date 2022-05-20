@@ -1,13 +1,13 @@
 import React from "react";
 import Link from "next/link";
 import clsx from "clsx";
-import Navbar from '../components/navbar';
+import Navbar from "../components/navbar";
 
 interface Props {}
 
-const Layout: React.FunctionComponent<Props> = ({children}) => {
+const Layout: React.FunctionComponent<Props> = ({ children }) => {
   return (
-    <div style={{backgroundColor: '#525252'}}>
+    <div style={{ backgroundColor: "#525252" }}>
       <Navbar />
       <div style={{ scrollBehavior: "smooth" }}>{children}</div>
     </div>
