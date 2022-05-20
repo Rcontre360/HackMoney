@@ -9,6 +9,7 @@ import "../shared/styles/style.css";
 import "../shared/styles/fonts.scss";
 import Head from "next/head";
 
+
 function MyApp({ Component, pageProps }) {
   return (
     <>

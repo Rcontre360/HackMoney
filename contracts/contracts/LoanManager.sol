@@ -24,7 +24,7 @@ import { IERC20Decimals } from "./interfaces/IERC20Decimals.sol";
 contract LoanManager is ILoanManager, Proxiable, ContextUpgradeable, AccessControlUpgradeable, SuperAppBase {
     using CFAv1Library for CFAv1Library.InitData;
 
-    bytes32 public constant MANAGER_ROLE = keccak256("MANAGER_ROLE");
+    bytes32 public constant LENDING_POOL = keccak256("LENDING_POOL");
     bytes32 public constant UPGRADER_ROLE = keccak256("UPGRADER_ROLE");
 
     CFAv1Library.InitData public cfaV1;
@@ -67,20 +67,27 @@ contract LoanManager is ILoanManager, Proxiable, ContextUpgradeable, AccessContr
      * managed by the lending pool.
      * @param principal amount received by borrower
      * @param flowRate repayment flow by user
-     * @param repaymentDuration duration of flowRate
      * @param borrower borrower, duh
      * @param receiver receiver of flowRate. In this case is the LendingPool
      * @param token payment/principal token
      */
     function createLoan(
         uint256 principal,
+        uint256 repaymentAmount,
         int96 flowRate,
-        uint256 repaymentDuration,
         address borrower,
         address receiver,
         address token
-    ) external onlyRole(MANAGER_ROLE) {
-        loans[loanId] = LoanData(principal, flowRate, block.timestamp, repaymentDuration, borrower, LoanStatus.Issued);
+    ) external onlyRole(LENDING_POOL) {
+        loans[loanId] = LoanData(
+            principal,
+            repaymentAmount,
+            flowRate,
+            flowRate,
+            block.timestamp,
+            borrower,
+            LoanStatus.Issued
+        );
         host.callAgreement(
             cfa,
             abi.encodeWithSelector(
@@ -97,6 +104,38 @@ contract LoanManager is ILoanManager, Proxiable, ContextUpgradeable, AccessContr
         loanId++;
     }
 
+    function markLoanAsDefaulted(uint256 loanId) external onlyRole(LENDING_POOL) {
+        LoanData memory data = loans[loanId];
+        //require(data.startDate + data.repaymentDuration > block.timestamp, "LoanManager:NOT_FINISHED_REPAYMENT");
+    }
+
+    function updateLoanAllowance(uint256 loanId, int96 minimumFlowRate) external onlyRole(LENDING_POOL) {
+        LoanData storage data = loans[loanId];
+        require(data.startDate > 0, "LoanManager:DOESNT_EXISTS");
+        require(minimumFlowRate < data.flowRate, "LoanManager:INVALID_FLOW_RATE");
+
+        data.minimumFlowRate = minimumFlowRate;
+    }
+
+    function updateLoanTerms(uint256 loanId, int96 newFlowRate) external onlyRole(LENDING_POOL) {
+        LoanData storage data = loans[loanId];
+        require(data.startDate > 0, "LoanManager:DOESNT_EXISTS");
+        require(newFlowRate > data.minimumFlowRate, "LoanManager:INVALID_FLOW_RATE");
+
+        data.flowRate = newFlowRate;
+        //data.duration = getRepaymentDuration(newFlowRate, data.startDate, data.repaymentAmount);
+    }
+
+    function getRepaymentDuration(
+        int96 flowRate,
+        uint256 startDate,
+        uint256 repaymentAmount
+    ) public returns (uint256) {
+        uint256 totalPaid = uint256(uint96(flowRate)) * (block.timestamp - startDate);
+        uint256 unpaidAmount = repaymentAmount - totalPaid;
+        return unpaidAmount / uint96(flowRate) + (block.timestamp - startDate);
+    }
+
     /**
      * @dev Callback on superfluid agreement. Check superfluid docs
      */
@@ -108,11 +147,7 @@ contract LoanManager is ILoanManager, Proxiable, ContextUpgradeable, AccessContr
         bytes calldata cbdata,
         bytes calldata ctx
     ) external override onlyHost returns (bytes memory newCtx) {
-        address borrower = host.decodeCtx(ctx).msgSender;
-        (, int96 flowRate, , ) = cfa.getFlow(token, borrower, address(this));
-
-        emit DepositSuperfluid(flowRate);
-        newCtx = ctx;
+        require(false, "LoanManager:DONT_DEPOSIT");
     }
 
     /**
@@ -126,11 +161,7 @@ contract LoanManager is ILoanManager, Proxiable, ContextUpgradeable, AccessContr
         bytes calldata cbdata,
         bytes calldata ctx
     ) external override onlyHost returns (bytes memory newCtx) {
-        address borrower = host.decodeCtx(ctx).msgSender;
-        (, int96 flowRate, , ) = cfa.getFlow(token, borrower, address(this));
-
-        newCtx = ctx;
-        emit DepositSuperfluid(flowRate);
+        require(false, "LoanManager:DONT_DEPOSIT");
     }
 
     /**
@@ -144,11 +175,7 @@ contract LoanManager is ILoanManager, Proxiable, ContextUpgradeable, AccessContr
         bytes calldata cbdata,
         bytes calldata ctx
     ) external override onlyHost returns (bytes memory newCtx) {
-        address borrower = host.decodeCtx(ctx).msgSender;
-        (, int96 flowRate, , ) = cfa.getFlow(token, borrower, address(this));
-
-        newCtx = ctx;
-        emit DepositSuperfluid(flowRate);
+        require(false, "LoanManager:DONT_DEPOSIT");
     }
 
     function _authorizeUpgrade(address) internal override onlyRole(UPGRADER_ROLE) {}

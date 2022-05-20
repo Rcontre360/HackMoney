@@ -112,7 +112,7 @@ export const InputDatePicker: React.FC<any> = ({
 				className={clsx(
 					Styles.tooltip,
 					'absolute flex items-center justify-center text-white right-4 2xl:w-6 2xl:h-6 w-5 h-5 f-14',
-					'rounded-full bg-primary cursor-pointer'
+					'rounded-full bg-color1 cursor-pointer'
 				)}
 			>
 				!{' '}

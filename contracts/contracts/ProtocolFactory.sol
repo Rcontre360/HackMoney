@@ -56,7 +56,7 @@ contract ProtocolFactory is AccessControl {
         pool = _createLendingPool(_token, manager, _host, creator);
         portfolios[portfolioId] = PortfoliosCreated(manager, pool);
 
-        AccessControl(address(manager)).grantRole(keccak256("MANAGER_ROLE"), address(pool));
+        AccessControl(address(manager)).grantRole(keccak256("LENDING_POOL"), address(pool));
 
         portfolioId++;
         emit CreatedPortfolio(manager, pool, creator);
@@ -68,7 +68,6 @@ contract ProtocolFactory is AccessControl {
         address owner
     ) private returns (ILoanManager manager) {
         bytes memory initCalldata = abi.encodeWithSelector(ILoanManager.initialize.selector, _host, _token);
-        bytes32 MANAGER_ROLE = keccak256("MANAGER_ROLE");
         bytes32 UPGRADER_ROLE = keccak256("UPGRADER_ROLE");
 
         manager = ILoanManager(address(new ProxyWrapper(address(loanManagerImplementation), initCalldata)));
