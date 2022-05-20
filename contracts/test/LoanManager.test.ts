@@ -49,6 +49,30 @@ describe("LoanManager", () => {
     };
   };
 
+  const loanFixture = async (): Promise<TestContext & {loan: any}> => {
+    const {loanManager, other, user, superToken, superfluid, accounts, ...rest} = await loadFixture(fixture);
+    const loan = {
+      principal: ethers.utils.parseEther("5"),
+      flowRate: ethers.utils.parseEther("0.00001"),
+      repaymentAmount: ethers.utils.parseEther("10000"),
+      borrower: user.address,
+      receiver: other.address,
+      token: superToken.address,
+      id: await loanManager.loanId(),
+    };
+
+    await approveFlow(hre, {sender: user, manager: loanManager.address, superToken, flowRate: 0, superfluid});
+    await loanManager.createLoan(
+      loan.principal,
+      loan.repaymentAmount,
+      loan.flowRate,
+      loan.borrower,
+      loan.receiver,
+      loan.token,
+    );
+    return {loanManager, other, user, superToken, superfluid, accounts, loan, ...rest};
+  };
+
   describe("Initialization", () => {
     it("Should initialize superfluid contracts", async () => {
       const {loanManager, user, superfluid} = await loadFixture(fixture);
@@ -67,29 +91,14 @@ describe("LoanManager", () => {
     });
   });
 
-  describe("Deposit", () => {
-    it("Should receive a money stream", async () => {
-      const {loanManager, user, other, superToken, token, superfluid} = await loadFixture(fixture);
-      const flowRate = ethers.utils.parseEther("0.001");
-
-      await expect(createFlow(hre, {superToken, sender: user, receiver: loanManager.address, flowRate, superfluid}))
-        .to.emit(loanManager, "DepositSuperfluid")
-        .withArgs(flowRate);
-      await increaseTime(hre, 7 * 24 * 3600);
-
-      expect(await superToken.balanceOf(loanManager.address)).to.be.gte(flowRate.mul(7 * 24 * 3600 - 1));
-      expect(await superToken.balanceOf(loanManager.address)).to.be.lte(flowRate.mul(7 * 24 * 3600 + 1));
-    });
-  });
-
-  describe("Create Loan", () => {
+  describe("Loans", () => {
     it("Should create loan metadata", async () => {
       const {loanManager, other, user, superToken, superfluid, accounts} = await loadFixture(fixture);
       const loan = {
         id: await loanManager.loanId(),
         principal: ethers.utils.parseEther("5"),
         flowRate: ethers.utils.parseEther("0.001"),
-        repaymentDuration: 7 * 24 * 3600,
+        repaymentAmount: ethers.utils.parseEther("10"),
         borrower: user.address,
         receiver: other.address,
         token: superToken.address,
@@ -98,29 +107,29 @@ describe("LoanManager", () => {
       await approveFlow(hre, {sender: user, manager: loanManager.address, superToken, flowRate: 0, superfluid});
       const pendingTx = loanManager.createLoan(
         loan.principal,
+        loan.repaymentAmount,
         loan.flowRate,
-        loan.repaymentDuration,
         loan.borrower,
         loan.receiver,
         loan.token,
       );
       const block = await ethers.provider.getBlock((await pendingTx).blockHash || "");
-      await expect(pendingTx).to.emit(loanManager, "CreateLoan").withArgs(loan.id);
+      await expect(pendingTx, "Create loan event").to.emit(loanManager, "CreateLoan").withArgs(loan.id);
       const createdLoan = await loanManager.loans(loan.id);
 
-      expect(createdLoan.principal).to.be.equal(loan.principal);
-      expect(createdLoan.flowRate).to.be.equal(loan.flowRate);
-      expect(createdLoan.startDate).to.be.equal(block.timestamp);
-      expect(createdLoan.repaymentDuration).to.be.equal(loan.repaymentDuration);
-      expect(createdLoan.borrower).to.be.equal(loan.borrower);
-      expect(createdLoan.status).to.be.equal(0); // LoanStatus.Issued
+      expect(createdLoan.principal, "Principal").to.be.equal(loan.principal);
+      expect(createdLoan.flowRate, "Flow rate").to.be.equal(loan.flowRate);
+      expect(createdLoan.startDate, "Start date").to.be.equal(block.timestamp);
+      expect(createdLoan.borrower, "Borrower").to.be.equal(loan.borrower);
+      expect(createdLoan.status, "Status").to.be.equal(0); // LoanStatus.Issued
     });
+
     it("Should create superfluid stream", async () => {
       const {loanManager, other, user, superToken, superfluid, accounts} = await loadFixture(fixture);
       const loan = {
         principal: ethers.utils.parseEther("5"),
         flowRate: ethers.utils.parseEther("0.001"),
-        repaymentDuration: 7 * 24 * 3600,
+        repaymentAmount: ethers.utils.parseEther("10"),
         borrower: user.address,
         receiver: other.address,
         token: superToken.address,
@@ -129,8 +138,8 @@ describe("LoanManager", () => {
       await approveFlow(hre, {sender: user, manager: loanManager.address, superToken, flowRate: 0, superfluid});
       await loanManager.createLoan(
         loan.principal,
+        loan.repaymentAmount,
         loan.flowRate,
-        loan.repaymentDuration,
         loan.borrower,
         loan.receiver,
         loan.token,
@@ -139,6 +148,45 @@ describe("LoanManager", () => {
 
       expect(await superToken.balanceOf(loan.receiver)).to.be.gte(loan.flowRate.mul(7 * 24 * 3600 - 1));
       expect(await superToken.balanceOf(loan.receiver)).to.be.lte(loan.flowRate.mul(7 * 24 * 3600 + 1));
+    });
+
+    it("Should update loan allowance", async () => {
+      const {loanManager, other, user, superToken, superfluid, accounts, loan} = await loadFixture(loanFixture);
+      const newFlowRate = loan.flowRate.div(2);
+
+      await loanManager.updateLoanAllowance(loan.id, newFlowRate);
+      const newLoan = await loanManager.loans(loan.id);
+
+      expect(newLoan.minimumFlowRate).to.be.equal(newFlowRate);
+    });
+
+    it("Should update loan terms", async () => {
+      const {loanManager, other, user, superToken, superfluid, accounts, loan} = await loadFixture(loanFixture);
+      const newFlowRate = loan.flowRate.div(2);
+
+      await loanManager.updateLoanAllowance(loan.id, newFlowRate);
+      await loanManager.updateLoanTerms(loan.id, newFlowRate);
+
+      const newLoan = await loanManager.loans(loan.id);
+
+      expect(newLoan.minimumFlowRate).to.be.equal(newFlowRate);
+      expect(newLoan.flowRate).to.be.equal(newFlowRate);
+    });
+
+    it("Should finalize repayment", async () => {
+      const {loanManager, other, user, superToken, superfluid, accounts, loan} = await loadFixture(loanFixture);
+
+      const actualLoan = await loanManager.loans(loan.id);
+      const repaymentDuration = await loanManager.getRepaymentDuration(
+        actualLoan.flowRate,
+        actualLoan.startDate,
+        actualLoan.repaymentAmount,
+      );
+      await increaseTime(hre, repaymentDuration.toNumber());
+      await loanManager.finalizeRepayment(loan.id);
+
+      const currentLoan = await loanManager.loans(loan.id);
+      expect(currentLoan.status).to.be.equal(1);
     });
   });
 });

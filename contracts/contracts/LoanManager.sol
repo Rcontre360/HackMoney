@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.13;
 
+import "hardhat/console.sol";
 import { ContextUpgradeable } from "@openzeppelin/contracts-upgradeable/utils/ContextUpgradeable.sol";
 import { AccessControlUpgradeable } from "@openzeppelin/contracts-upgradeable/access/AccessControlUpgradeable.sol";
 
@@ -104,11 +105,6 @@ contract LoanManager is ILoanManager, Proxiable, ContextUpgradeable, AccessContr
         loanId++;
     }
 
-    function markLoanAsDefaulted(uint256 loanId) external onlyRole(LENDING_POOL) {
-        LoanData memory data = loans[loanId];
-        //require(data.startDate + data.repaymentDuration > block.timestamp, "LoanManager:NOT_FINISHED_REPAYMENT");
-    }
-
     function updateLoanAllowance(uint256 loanId, int96 minimumFlowRate) external onlyRole(LENDING_POOL) {
         LoanData storage data = loans[loanId];
         require(data.startDate > 0, "LoanManager:DOESNT_EXISTS");
@@ -120,17 +116,27 @@ contract LoanManager is ILoanManager, Proxiable, ContextUpgradeable, AccessContr
     function updateLoanTerms(uint256 loanId, int96 newFlowRate) external onlyRole(LENDING_POOL) {
         LoanData storage data = loans[loanId];
         require(data.startDate > 0, "LoanManager:DOESNT_EXISTS");
-        require(newFlowRate >= data.minimumFlowRate, "LoanManager:INVALID_FLOW_RATE");
 
         data.flowRate = newFlowRate;
+        if (newFlowRate < data.minimumFlowRate) data.status = LoanStatus.Defaulted;
+    }
+
+    function finalizeRepayment(uint256 loanId) external onlyRole(LENDING_POOL) {
+        LoanData storage data = loans[loanId];
+        require(data.startDate > 0, "LoanManager:DOESNT_EXISTS");
+
+        uint256 duration = getRepaymentDuration(data.flowRate, data.startDate, data.repaymentAmount);
+        if (duration <= 0) data.status = LoanStatus.Repaid;
+        else data.status = LoanStatus.Defaulted;
     }
 
     function getRepaymentDuration(
         int96 flowRate,
         uint256 startDate,
         uint256 repaymentAmount
-    ) public returns (uint256) {
+    ) public view returns (uint256) {
         uint256 totalPaid = uint256(uint96(flowRate)) * (block.timestamp - startDate);
+        if (totalPaid > repaymentAmount) return 0;
         uint256 unpaidAmount = repaymentAmount - totalPaid;
         return unpaidAmount / uint96(flowRate) + (block.timestamp - startDate);
     }

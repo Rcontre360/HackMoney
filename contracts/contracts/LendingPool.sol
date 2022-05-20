@@ -96,12 +96,8 @@ contract LendingPool is ILendingPool, Proxiable, ContextUpgradeable, AccessContr
         loanManager.createLoan(principal, repaymentAmount, flowRate, borrower, address(this), address(token));
     }
 
-    function markLoanAsDefaulted(uint256 loanId) external onlyRole(MANAGER_ROLE) {
-        loanManager.markLoanAsDefaulted(loanId);
-    }
-
-    function updateLoanTerms(uint256 loanId, int96 minimumFlowRate) external onlyRole(MANAGER_ROLE) {
-        loanManager.updateLoanTerms(loanId, minimumFlowRate);
+    function updateLoanAllowance(uint256 loanId, int96 minimumFlowRate) external onlyRole(MANAGER_ROLE) {
+        loanManager.updateLoanAllowance(loanId, minimumFlowRate);
     }
 
     /**
@@ -179,6 +175,7 @@ contract LendingPool is ILendingPool, Proxiable, ContextUpgradeable, AccessContr
             emit DepositSuperfluid(sender, flowRate);
         } else {
             uint256 loanId = abi.decode(context.userData, (uint256));
+            loanManager.finalizeRepayment(loanId);
         }
     }
 

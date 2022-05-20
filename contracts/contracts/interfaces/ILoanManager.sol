@@ -23,6 +23,8 @@ interface ILoanManager {
 
     event CreateLoan(uint256 loanId);
 
+    function initialize(ISuperfluid _host, ISuperToken _token) external;
+
     function createLoan(
         uint256 principal,
         uint256 repaymentAmount,
@@ -32,9 +34,9 @@ interface ILoanManager {
         address token
     ) external;
 
-    function markLoanAsDefaulted(uint256 loanId) external;
-
     function updateLoanTerms(uint256 loanId, int96 minimumFlowRate) external;
 
-    function initialize(ISuperfluid _host, ISuperToken _token) external;
+    function updateLoanAllowance(uint256 loanId, int96 minimumFlowRate) external;
+
+    function finalizeRepayment(uint256 loanId) external;
 }
