@@ -62,25 +62,11 @@ describe("LoanManager", () => {
     };
 
     await approveFlow(hre, {sender: user, manager: loanManager.address, superToken, flowRate: 0, superfluid});
-    await loanManager.createLoan(
-      loan.principal,
-      loan.repaymentAmount,
-      loan.flowRate,
-      loan.borrower,
-      loan.receiver,
-      loan.token,
-    );
+    await loanManager.createLoan(loan.principal, loan.repaymentAmount, loan.flowRate, loan.borrower);
     return {loanManager, other, user, superToken, superfluid, accounts, loan, ...rest};
   };
 
   describe("Initialization", () => {
-    it("Should initialize superfluid contracts", async () => {
-      const {loanManager, user, superfluid} = await loadFixture(fixture);
-
-      expect(await loanManager.host()).to.be.equal(superfluid.contracts.host.address);
-      expect(await loanManager.cfa()).to.be.equal(superfluid.contracts.cfaV1.address);
-    });
-
     it("Should initialize user role", async () => {
       const {loanManager, user} = await loadFixture(fixture);
 
@@ -105,14 +91,7 @@ describe("LoanManager", () => {
       };
 
       await approveFlow(hre, {sender: user, manager: loanManager.address, superToken, flowRate: 0, superfluid});
-      const pendingTx = loanManager.createLoan(
-        loan.principal,
-        loan.repaymentAmount,
-        loan.flowRate,
-        loan.borrower,
-        loan.receiver,
-        loan.token,
-      );
+      const pendingTx = loanManager.createLoan(loan.principal, loan.repaymentAmount, loan.flowRate, loan.borrower);
       const block = await ethers.provider.getBlock((await pendingTx).blockHash || "");
       await expect(pendingTx, "Create loan event").to.emit(loanManager, "CreateLoan").withArgs(loan.id);
       const createdLoan = await loanManager.loans(loan.id);
@@ -136,14 +115,7 @@ describe("LoanManager", () => {
       };
 
       await approveFlow(hre, {sender: user, manager: loanManager.address, superToken, flowRate: 0, superfluid});
-      await loanManager.createLoan(
-        loan.principal,
-        loan.repaymentAmount,
-        loan.flowRate,
-        loan.borrower,
-        loan.receiver,
-        loan.token,
-      );
+      await loanManager.createLoan(loan.principal, loan.repaymentAmount, loan.flowRate, loan.borrower);
       await increaseTime(hre, 7 * 24 * 3600);
 
       expect(await superToken.balanceOf(loan.receiver)).to.be.gte(loan.flowRate.mul(7 * 24 * 3600 - 1));

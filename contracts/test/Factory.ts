@@ -124,8 +124,6 @@ describe("Factory", () => {
       );
 
       const loanManager = <LoanManager>await attach(hre, "LoanManager", createLog.args.manager);
-      expect(await loanManager.host()).to.be.equal(superfluid.contracts.host.address);
-      expect(await loanManager.cfa()).to.be.equal(superfluid.contracts.cfaV1.address);
 
       expect(await loanManager.hasRole(await loanManager.LENDING_POOL(), createLog.args.pool)).to.be.equal(true);
       expect(await loanManager.hasRole(await loanManager.DEFAULT_ADMIN_ROLE(), user.address)).to.be.equal(true);

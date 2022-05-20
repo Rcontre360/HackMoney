@@ -67,7 +67,7 @@ contract ProtocolFactory is AccessControl {
         ISuperToken _token,
         address owner
     ) private returns (ILoanManager manager) {
-        bytes memory initCalldata = abi.encodeWithSelector(ILoanManager.initialize.selector, _host, _token);
+        bytes memory initCalldata = abi.encodeWithSelector(ILoanManager.initialize.selector);
         bytes32 UPGRADER_ROLE = keccak256("UPGRADER_ROLE");
 
         manager = ILoanManager(address(new ProxyWrapper(address(loanManagerImplementation), initCalldata)));

@@ -34,9 +34,7 @@ describe("LendingPool", () => {
     const superfluid = await deployEnvironment(hre, accounts[0]);
     const token = <MockERC20>await deploy(hre, "MockERC20", accounts[0], []);
     const superToken = await createSuperToken(hre, {token, superfluid});
-    const loanManager = <LoanManager>(
-      await deployBehindProxy(hre, "LoanManager", [superfluid.contracts.host.address, superToken.address])
-    );
+    const loanManager = <LoanManager>await deployBehindProxy(hre, "LoanManager", []);
     const lendingPool = <LendingPool>(
       await deployBehindProxy(hre, "LendingPool", [
         superToken.address,
@@ -52,6 +50,7 @@ describe("LendingPool", () => {
     await mint(token, accounts[0], amount);
     await upgradeToken({token, superToken, amount, signer: accounts[0]});
     await loanManager.grantRole(await loanManager.LENDING_POOL(), lendingPool.address);
+    await loanManager.grantRole(await loanManager.UPGRADER_ROLE(), accounts[0].address);
     await lendingPool.grantRole(await lendingPool.MANAGER_ROLE(), accounts[0].address);
     await lendingPool.grantRole(await lendingPool.DEPOSITOR_ROLE(), accounts[1].address);
 
@@ -84,6 +83,7 @@ describe("LendingPool", () => {
 
     await superToken.connect(depositor).approve(lendingPool.address, loan.principal);
     await lendingPool.connect(depositor).deposit(loan.principal);
+
     await approveFlow(hre, {sender: user, manager: lendingPool.address, superToken, flowRate: 0, superfluid});
     await lendingPool.createLoan(loan.principal, loan.repaymentAmount, loan.flowRate, loan.borrower);
 

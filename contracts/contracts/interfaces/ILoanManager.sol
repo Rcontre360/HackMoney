@@ -23,15 +23,13 @@ interface ILoanManager {
 
     event CreateLoan(uint256 loanId);
 
-    function initialize(ISuperfluid _host, ISuperToken _token) external;
+    function initialize() external;
 
     function createLoan(
         uint256 principal,
         uint256 repaymentAmount,
         int96 flowRate,
-        address borrower,
-        address receiver,
-        address token
+        address borrower
     ) external;
 
     function updateLoanTerms(uint256 loanId, int96 minimumFlowRate) external;

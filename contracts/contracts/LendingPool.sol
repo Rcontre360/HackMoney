@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.13;
 
+import "hardhat/console.sol";
 import { SafeERC20 } from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import { ContextUpgradeable } from "@openzeppelin/contracts-upgradeable/utils/ContextUpgradeable.sol";
 import { ERC20 } from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
@@ -93,7 +94,19 @@ contract LendingPool is ILendingPool, Proxiable, ContextUpgradeable, AccessContr
         address borrower
     ) external onlyRole(MANAGER_ROLE) {
         token.safeTransfer(borrower, principal);
-        loanManager.createLoan(principal, repaymentAmount, flowRate, borrower, address(this), address(token));
+        loanManager.createLoan(principal, repaymentAmount, flowRate, borrower);
+        host.callAgreement(
+            cfa,
+            abi.encodeWithSelector(
+                cfa.createFlowByOperator.selector,
+                token,
+                borrower,
+                address(this),
+                flowRate,
+                new bytes(0)
+            ),
+            "0x"
+        );
     }
 
     function updateLoanAllowance(uint256 loanId, int96 minimumFlowRate) external onlyRole(MANAGER_ROLE) {
