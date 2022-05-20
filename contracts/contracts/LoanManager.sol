@@ -120,10 +120,9 @@ contract LoanManager is ILoanManager, Proxiable, ContextUpgradeable, AccessContr
     function updateLoanTerms(uint256 loanId, int96 newFlowRate) external onlyRole(LENDING_POOL) {
         LoanData storage data = loans[loanId];
         require(data.startDate > 0, "LoanManager:DOESNT_EXISTS");
-        require(newFlowRate > data.minimumFlowRate, "LoanManager:INVALID_FLOW_RATE");
+        require(newFlowRate >= data.minimumFlowRate, "LoanManager:INVALID_FLOW_RATE");
 
         data.flowRate = newFlowRate;
-        //data.duration = getRepaymentDuration(newFlowRate, data.startDate, data.repaymentAmount);
     }
 
     function getRepaymentDuration(
