@@ -1,10 +1,15 @@
 @import url('https://fonts.googleapis.com/css2?family=Viga&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,400&display=swap');
 
 *,
 *::before,
 *::after {
   box-sizing: border-box;
   font-family: 'Viga', sans-serif;
+}
+
+.Lato {
+  font-family: 'Lato', sans-serif;
 }
 
 ul[class],
@@ -61,3 +66,4 @@ textarea,
 select {
   font: inherit;
 }
+

@@ -1,6 +1,7 @@
 import React from "react";
 import clsx from "clsx";
 import Styles from "./styles.module.scss";
+import Link from "next/link";
 
 const Table = () => {
   const headers = [
@@ -99,12 +100,12 @@ const Table = () => {
                           {item.dao}
                         </td>
                         <td className="px-6 py-10 whitespace-nowrap text-primary f-20 text-center">
-                          <a
-                            href={`/poolForm/${item.pool.id}`}
+                          <Link
+                            href={`/app/poolForm/${item.pool.id}`}
                             className="whitespace-nowrap"
                           >
                             {item.pool.value}
-                          </a>
+                          </Link>
                         </td>
                         <td className="px-6 py-10 whitespace-nowrap f-18 text-center">
                           {item.tokens_symbol}

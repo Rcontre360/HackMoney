@@ -9,8 +9,8 @@ const Layout: React.FunctionComponent<Props> = ({children}) => {
     <>
       <nav
         className={clsx(
-          "sticky top-0 flex items-center justify-between z-50 w-full shadow-lg p-4",
-          "transition duration-500 ease-in-out bg-white"
+          "fixed top-0 flex items-center justify-between z-50 w-full shadow-lg p-4",
+          "transition duration-500 ease-in-out bg-white h-16"
         )}
       >
         <div className="text-primary f-24 font-black">
@@ -24,7 +24,9 @@ const Layout: React.FunctionComponent<Props> = ({children}) => {
           </div>
         </div>
       </nav>
-      <div style={{ scrollBehavior: "smooth" }}>{children}</div>
+      <div className="layout" style={{ scrollBehavior: "smooth" }}>
+        {children}
+      </div>
     </>
   );
 };

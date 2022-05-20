@@ -1,14 +1,12 @@
+import clsx from "clsx";
 import React from "react";
-import { StadisticsBoard } from "./StadisticsBoard/StadisticsBoard";
-import Table from "./table/table";
+import { MainSection } from "./mainSection/mainSection";
+import Styles from "./styles.module.scss";
 
 const LandingComponent: React.FunctionComponent<{}> = (props) => {
   return (
-    <div className="flex flex-col items-center">
-      <StadisticsBoard></StadisticsBoard>
-      <div className="w-full text-center">
-        <Table />
-      </div>
+    <div className={clsx("flex flex-col items-center", Styles.gradient)}>
+      <MainSection />
     </div>
   );
 };

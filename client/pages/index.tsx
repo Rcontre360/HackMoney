@@ -1,8 +1,13 @@
 import LandingComponent from "@shared/components/landing/LandingComponent";
+import LayoutLanding from "@shared/layout/layoutLanding";
 import React from "react";
 
-const Landing: React.FunctionComponent<{}> = (props) => {
-  return <LandingComponent />;
+const App: React.FunctionComponent<{}> = (props) => {
+  return (
+    <LayoutLanding>
+      <LandingComponent />
+    </LayoutLanding>
+  );
 };
 
-export default Landing;
+export default App;
