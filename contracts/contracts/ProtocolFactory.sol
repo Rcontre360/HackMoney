@@ -91,8 +91,6 @@ contract ProtocolFactory is AccessControl {
         bytes32 MANAGER_ROLE = keccak256("MANAGER_ROLE");
 
         pool = ILendingPool(address(new ProxyWrapper(address(lendingPoolImplementation), initCalldata)));
-        AccessControl(address(pool)).grantRole(DEPOSITOR_ROLE, owner);
-        AccessControl(address(pool)).grantRole(MANAGER_ROLE, owner);
         AccessControl(address(pool)).grantRole(DEFAULT_ADMIN_ROLE, owner);
     }
 }

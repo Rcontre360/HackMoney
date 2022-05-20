@@ -21,9 +21,6 @@ contract LendingPool is ILendingPool, Proxiable, ContextUpgradeable, AccessContr
     using SafeERC20 for ISuperToken;
     using CFAv1Library for CFAv1Library.InitData;
 
-    bytes32 public constant DEPOSITOR_ROLE = keccak256("DEPOSITOR_ROLE");
-    bytes32 public constant MANAGER_ROLE = keccak256("MANAGER_ROLE");
-
     CFAv1Library.InitData public cfaV1;
     ISuperfluid public host;
     IConstantFlowAgreementV1 public cfa;
@@ -62,7 +59,7 @@ contract LendingPool is ILendingPool, Proxiable, ContextUpgradeable, AccessContr
      * @dev allows the DAO deposit funds using normal ERC20 tokens
      * @param amount amount of token to desposit
      */
-    function deposit(uint256 amount) external onlyRole(DEPOSITOR_ROLE) {
+    function deposit(uint256 amount) external onlyRole(DEFAULT_ADMIN_ROLE) {
         require(amount > 0, "LendingPool: AMOUNT_ZERO");
         address sender = _msgSender();
 
@@ -74,42 +71,14 @@ contract LendingPool is ILendingPool, Proxiable, ContextUpgradeable, AccessContr
      * @dev allows the DAO withdraw funds using normal ERC20 tokens
      * @param amount amount of token to withdraw
      */
-    function withdraw(uint256 amount) external onlyRole(DEPOSITOR_ROLE) {
+    function withdraw(uint256 amount) external onlyRole(DEFAULT_ADMIN_ROLE) {
         address sender = _msgSender();
         uint256 funds = token.balanceOf(address(this));
         token.safeTransfer(sender, amount);
         emit Withdraw(sender, amount);
     }
 
-    /**
-     * @dev allows the DAO create loans to members/external wallets
-     * @param principal amount received by borrower
-     * @param flowRate payment rate by borrower
-     * @param borrower borrower address
-     */
-    function createLoan(
-        uint256 principal,
-        uint256 repaymentAmount,
-        int96 flowRate,
-        address borrower
-    ) external onlyRole(MANAGER_ROLE) {
-        token.safeTransfer(borrower, principal);
-        loanManager.createLoan(principal, repaymentAmount, flowRate, borrower);
-        host.callAgreement(
-            cfa,
-            abi.encodeWithSelector(
-                cfa.createFlowByOperator.selector,
-                token,
-                borrower,
-                address(this),
-                flowRate,
-                new bytes(0)
-            ),
-            "0x"
-        );
-    }
-
-    function updateLoanAllowance(uint256 loanId, int96 minimumFlowRate) external onlyRole(MANAGER_ROLE) {
+    function updateLoanAllowance(uint256 loanId, int96 minimumFlowRate) external onlyRole(DEFAULT_ADMIN_ROLE) {
         loanManager.updateLoanAllowance(loanId, minimumFlowRate);
     }
 
@@ -118,6 +87,16 @@ contract LendingPool is ILendingPool, Proxiable, ContextUpgradeable, AccessContr
      */
     function value() public view returns (uint256) {
         return token.balanceOf(address(this));
+    }
+
+    function _createLoan(
+        uint256 principal,
+        uint256 repaymentAmount,
+        int96 flowRate,
+        address borrower
+    ) internal {
+        token.safeTransfer(borrower, principal);
+        loanManager.createLoan(principal, repaymentAmount, flowRate, borrower);
     }
 
     /**
@@ -133,15 +112,18 @@ contract LendingPool is ILendingPool, Proxiable, ContextUpgradeable, AccessContr
         bytes calldata ctx
     ) external override returns (bytes memory newCtx) {
         ISuperfluid.Context memory context = host.decodeCtx(ctx);
-        address sender = host.decodeCtx(ctx).msgSender;
-        (, int96 flowRate, , ) = cfa.getFlow(token, sender, address(this));
+        address sender = context.msgSender;
+        require(hasRole(DEFAULT_ADMIN_ROLE, sender), "LendingPool:ONLY_DAO");
+
+        (address borrower, uint256 repaymentAmount, uint256 principal) = abi.decode(
+            context.userData,
+            (address, uint256, uint256)
+        );
+        (, int96 flowRate, , ) = cfa.getFlow(token, borrower, address(this));
         newCtx = ctx;
 
-        if (hasRole(DEPOSITOR_ROLE, sender)) {
-            emit DepositSuperfluid(sender, flowRate);
-        } else {
-            uint256 loanId = abi.decode(context.userData, (uint256));
-        }
+        uint256 loanId = abi.decode(context.userData, (uint256));
+        _createLoan(principal, repaymentAmount, flowRate, borrower);
     }
 
     /**
@@ -157,15 +139,12 @@ contract LendingPool is ILendingPool, Proxiable, ContextUpgradeable, AccessContr
     ) external override returns (bytes memory newCtx) {
         ISuperfluid.Context memory context = host.decodeCtx(ctx);
         address sender = host.decodeCtx(ctx).msgSender;
+        require(hasRole(DEFAULT_ADMIN_ROLE, sender), "LendingPool:ONLY_DAO");
         (, int96 flowRate, , ) = cfa.getFlow(token, sender, address(this));
         newCtx = ctx;
 
-        if (hasRole(DEPOSITOR_ROLE, sender)) {
-            emit DepositSuperfluid(sender, flowRate);
-        } else {
-            uint256 loanId = abi.decode(context.userData, (uint256));
-            loanManager.updateLoanTerms(loanId, flowRate);
-        }
+        uint256 loanId = abi.decode(context.userData, (uint256));
+        loanManager.updateLoanTerms(loanId, flowRate);
     }
 
     /**
@@ -181,15 +160,12 @@ contract LendingPool is ILendingPool, Proxiable, ContextUpgradeable, AccessContr
     ) external override returns (bytes memory newCtx) {
         ISuperfluid.Context memory context = host.decodeCtx(ctx);
         address sender = host.decodeCtx(ctx).msgSender;
+        require(hasRole(DEFAULT_ADMIN_ROLE, sender), "LendingPool:ONLY_DAO");
         (, int96 flowRate, , ) = cfa.getFlow(token, sender, address(this));
         newCtx = ctx;
 
-        if (hasRole(DEPOSITOR_ROLE, sender)) {
-            emit DepositSuperfluid(sender, flowRate);
-        } else {
-            uint256 loanId = abi.decode(context.userData, (uint256));
-            loanManager.finalizeRepayment(loanId);
-        }
+        uint256 loanId = abi.decode(context.userData, (uint256));
+        loanManager.finalizeRepayment(loanId);
     }
 
     function _authorizeUpgrade(address) internal override onlyRole(DEFAULT_ADMIN_ROLE) {}

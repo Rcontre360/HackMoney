@@ -28,9 +28,7 @@ describe("LoanManager", () => {
     const superfluid = await deployEnvironment(hre, accounts[0]);
     const token = <MockERC20>await deploy(hre, "MockERC20", accounts[0], []);
     const superToken = await createSuperToken(hre, {token, superfluid});
-    const loanManager = <LoanManager>(
-      await deployBehindProxy(hre, "LoanManager", [superfluid.contracts.host.address, superToken.address])
-    );
+    const loanManager = <LoanManager>await deployBehindProxy(hre, "LoanManager", []);
 
     const amount = ethers.utils.parseEther("10000");
 
@@ -101,25 +99,6 @@ describe("LoanManager", () => {
       expect(createdLoan.startDate, "Start date").to.be.equal(block.timestamp);
       expect(createdLoan.borrower, "Borrower").to.be.equal(loan.borrower);
       expect(createdLoan.status, "Status").to.be.equal(0); // LoanStatus.Issued
-    });
-
-    it("Should create superfluid stream", async () => {
-      const {loanManager, other, user, superToken, superfluid, accounts} = await loadFixture(fixture);
-      const loan = {
-        principal: ethers.utils.parseEther("5"),
-        flowRate: ethers.utils.parseEther("0.001"),
-        repaymentAmount: ethers.utils.parseEther("10"),
-        borrower: user.address,
-        receiver: other.address,
-        token: superToken.address,
-      };
-
-      await approveFlow(hre, {sender: user, manager: loanManager.address, superToken, flowRate: 0, superfluid});
-      await loanManager.createLoan(loan.principal, loan.repaymentAmount, loan.flowRate, loan.borrower);
-      await increaseTime(hre, 7 * 24 * 3600);
-
-      expect(await superToken.balanceOf(loan.receiver)).to.be.gte(loan.flowRate.mul(7 * 24 * 3600 - 1));
-      expect(await superToken.balanceOf(loan.receiver)).to.be.lte(loan.flowRate.mul(7 * 24 * 3600 + 1));
     });
 
     it("Should update loan allowance", async () => {

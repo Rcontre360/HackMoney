@@ -10,13 +10,13 @@ import "./interfaces/ILoanManager.sol";
 contract POAPChainScore is ERC721, ERC721URIStorage, AccessControl {
     using Counters for Counters.Counter;
 
-	enum LoanStatus {
+    enum LoanStatus {
         Issued,
         Repaid,
         Defaulted
     }
 
-	struct LoanData {
+    struct LoanData {
         uint256 principal;
         int96 flowRate;
         uint256 startDate;
@@ -24,26 +24,29 @@ contract POAPChainScore is ERC721, ERC721URIStorage, AccessControl {
         address borrower;
         LoanStatus status;
     }
-    
-	bytes32 public constant URI_SETTER_ROLE = keccak256("URI_SETTER_ROLE");
+
+    bytes32 public constant URI_SETTER_ROLE = keccak256("URI_SETTER_ROLE");
     bytes32 public constant MINTER_ROLE = keccak256("MINTER_ROLE");
-    
-	Counters.Counter private _tokenIdCounter;
-	
-	string private baseURI;
-	
-	mapping(uint256 => LoanData) public POAPloans;
-	
+
+    Counters.Counter private _tokenIdCounter;
+
+    string private baseURI;
+
+    mapping(uint256 => LoanData) public POAPloans;
 
     constructor(string memory _baseURI) ERC721("POAPChainScore", "CS") {
         _grantRole(DEFAULT_ADMIN_ROLE, msg.sender);
         _grantRole(MINTER_ROLE, msg.sender);
-		baseURI = _baseURI;
+        baseURI = _baseURI;
     }
 
-    function safeMint(address to,LoanData memory loanData, uint id) public onlyRole(MINTER_ROLE) {
+    function safeMint(
+        address to,
+        LoanData memory loanData,
+        uint256 id
+    ) public onlyRole(MINTER_ROLE) {
         uint256 tokenId = _tokenIdCounter.current();
-		POAPloans[id] = loanData;
+        POAPloans[id] = loanData;
         _tokenIdCounter.increment();
         _safeMint(to, tokenId);
     }
@@ -54,29 +57,19 @@ contract POAPChainScore is ERC721, ERC721URIStorage, AccessControl {
         super._burn(tokenId);
     }
 
-	function setBaseURI(string memory _baseURI) public onlyRole(URI_SETTER_ROLE){
-		baseURI=_baseURI;
-	}
+    function setBaseURI(string memory _baseURI) public onlyRole(URI_SETTER_ROLE) {
+        baseURI = _baseURI;
+    }
 
-	function getLoanData(uint id) external view returns(LoanData memory){
-		return POAPloans[id];
-	}
+    function getLoanData(uint256 id) external view returns (LoanData memory) {
+        return POAPloans[id];
+    }
 
-    function tokenURI(uint256 tokenId)
-        public
-        view
-        override(ERC721, ERC721URIStorage)
-        returns (string memory)
-    {
+    function tokenURI(uint256 tokenId) public view override(ERC721, ERC721URIStorage) returns (string memory) {
         return super.tokenURI(tokenId);
     }
 
-    function supportsInterface(bytes4 interfaceId)
-        public
-        view
-        override(ERC721, AccessControl)
-        returns (bool)
-    {
+    function supportsInterface(bytes4 interfaceId) public view override(ERC721, AccessControl) returns (bool) {
         return super.supportsInterface(interfaceId);
     }
 }

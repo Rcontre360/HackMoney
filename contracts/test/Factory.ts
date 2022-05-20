@@ -103,12 +103,6 @@ describe("Factory", () => {
       expect(await lendingPool.host()).to.be.equal(superfluid.contracts.host.address);
       expect(await lendingPool.cfa()).to.be.equal(superfluid.contracts.cfaV1.address);
 
-      expect(await lendingPool.hasRole(await lendingPool.DEPOSITOR_ROLE(), user.address), "DEPOSITOR_ROLE").to.be.equal(
-        true,
-      );
-      expect(await lendingPool.hasRole(await lendingPool.MANAGER_ROLE(), user.address), "MANAGER_ROLE").to.be.equal(
-        true,
-      );
       expect(
         await lendingPool.hasRole(await lendingPool.DEFAULT_ADMIN_ROLE(), user.address),
         "DEFAULT_ADMIN_ROLE",

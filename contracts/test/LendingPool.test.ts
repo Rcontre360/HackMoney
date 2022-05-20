@@ -4,7 +4,7 @@ import {SignerWithAddress} from "@nomiclabs/hardhat-ethers/dist/src/signer-with-
 import {Framework} from "@superfluid-finance/sdk-core";
 
 import {LendingPool, LoanManager} from "@sctypes/contracts";
-import {MockERC20, SuperToken} from "@sctypes/index";
+import {MockERC20, SuperToken, Superfluid, ConstantFlowAgreementV1} from "@sctypes/index";
 import {deploy, deployBehindProxy, attach} from "@utils/contracts";
 import {mint} from "@utils/erc20";
 import {deployEnvironment, upgradeToken, createFlow, createSuperToken, approveFlow} from "@utils/superfluid";
@@ -17,9 +17,8 @@ const errorHandler = (err: Error) => {
 };
 
 interface TestContext {
-  user: SignerWithAddress;
+  dao: SignerWithAddress;
   other: SignerWithAddress;
-  depositor: SignerWithAddress;
   accounts: SignerWithAddress[];
   superfluid: Framework;
   loanManager: LoanManager;
@@ -49,15 +48,13 @@ describe("LendingPool", () => {
     await upgradeToken({token, superToken, amount, signer: accounts[1]});
     await mint(token, accounts[0], amount);
     await upgradeToken({token, superToken, amount, signer: accounts[0]});
+
     await loanManager.grantRole(await loanManager.LENDING_POOL(), lendingPool.address);
     await loanManager.grantRole(await loanManager.UPGRADER_ROLE(), accounts[0].address);
-    await lendingPool.grantRole(await lendingPool.MANAGER_ROLE(), accounts[0].address);
-    await lendingPool.grantRole(await lendingPool.DEPOSITOR_ROLE(), accounts[1].address);
 
     return {
-      user: accounts[0],
-      other: accounts[2],
-      depositor: accounts[1],
+      dao: accounts[0],
+      other: accounts[1],
       accounts,
       loanManager,
       lendingPool,
@@ -68,29 +65,47 @@ describe("LendingPool", () => {
   };
 
   const loanFixture = async () => {
-    const {user, other, depositor, lendingPool, loanManager, superToken, superfluid, ...rest} = await loadFixture(
-      fixture,
-    );
+    const {dao, other, lendingPool, loanManager, superToken, superfluid, ...rest} = await loadFixture(fixture);
     const loan = {
       principal: ethers.utils.parseEther("5"),
       flowRate: ethers.utils.parseEther("0.00001"),
       repaymentAmount: ethers.utils.parseEther("10000"),
-      borrower: user.address,
-      receiver: other.address,
+      borrower: other.address,
       token: superToken.address,
       id: await loanManager.loanId(),
     };
 
-    await superToken.connect(depositor).approve(lendingPool.address, loan.principal);
-    await lendingPool.connect(depositor).deposit(loan.principal);
+    await superToken.approve(lendingPool.address, loan.principal);
+    await lendingPool.deposit(loan.principal);
+    //dao approves flow
+    await approveFlow(hre, {sender: other, manager: dao.address, superToken, flowRate: 0, superfluid});
 
-    await approveFlow(hre, {sender: user, manager: lendingPool.address, superToken, flowRate: 0, superfluid});
-    await lendingPool.createLoan(loan.principal, loan.repaymentAmount, loan.flowRate, loan.borrower);
+    const host = <Superfluid>await attach(hre, "Superfluid", superfluid.contracts.host.address);
+    const cfa = <ConstantFlowAgreementV1>(
+      await attach(hre, "ConstantFlowAgreementV1", superfluid.contracts.cfaV1.address)
+    );
+
+    //other inits flow and creates loan
+    await host
+      .connect(dao)
+      .callAgreement(
+        superfluid.contracts.cfaV1.address,
+        cfa.interface.encodeFunctionData("createFlowByOperator", [
+          superToken.address,
+          other.address,
+          lendingPool.address,
+          loan.flowRate,
+          [],
+        ]),
+        web3.eth.abi.encodeParameters(
+          ["address", "uint256", "uint256"],
+          [other.address, loan.repaymentAmount, loan.principal],
+        ),
+      );
 
     return {
-      user,
+      dao,
       other,
-      depositor,
       lendingPool,
       loanManager,
       superToken,
@@ -110,30 +125,34 @@ describe("LendingPool", () => {
     });
 
     it("Should initialize roles", async () => {
-      const {lendingPool, user} = await loadFixture(fixture);
-      expect(await lendingPool.hasRole(await lendingPool.DEFAULT_ADMIN_ROLE(), user.address)).to.be.equal(true);
+      const {lendingPool, dao} = await loadFixture(fixture);
+      expect(await lendingPool.hasRole(await lendingPool.DEFAULT_ADMIN_ROLE(), dao.address)).to.be.equal(true);
     });
   });
 
-  describe("Deposit", () => {
-    it("Should receive superfluid flowRate", async () => {
-      const {lendingPool, loanManager, superToken, superfluid, depositor} = await loadFixture(fixture);
-      const flowRate = ethers.utils.parseEther("0.001");
+  describe("Loans", () => {
+    it("Should create a loan on flow rate created", async () => {
+      const {lendingPool, loanManager, superToken, superfluid, other, dao, loan} = await loadFixture(loanFixture);
+      const currentLoan = await loanManager.loans(loan.id);
 
-      await expect(
-        createFlow(hre, {superToken, sender: depositor, receiver: lendingPool.address, flowRate, superfluid}),
-      )
-        .to.emit(lendingPool, "DepositSuperfluid")
-        .withArgs(depositor.address, flowRate);
-      await increaseTime(hre, 7 * 24 * 3600);
+      expect(currentLoan.borrower).to.be.equal(loan.borrower);
+      expect(currentLoan.repaymentAmount).to.be.equal(loan.repaymentAmount);
+      expect(currentLoan.principal).to.be.equal(loan.principal);
+      expect(currentLoan.flowRate).to.be.equal(loan.flowRate);
+      expect(currentLoan.status).to.be.equal(0);
+      expect(currentLoan.startDate).to.be.gt(0);
     });
-  });
 
-  describe.only("Loans update", () => {
-    it("Should update loans allowance", async () => {
-      const {user, other, lendingPool, loanManager, superToken, superfluid, depositor} = await loadFixture(
-        loanFixture,
-      );
+    it("Should create a loan on flow rate created", async () => {
+      const {lendingPool, loanManager, superToken, superfluid, other, dao, loan} = await loadFixture(loanFixture);
+      const currentLoan = await loanManager.loans(loan.id);
+
+      expect(currentLoan.borrower).to.be.equal(loan.borrower);
+      expect(currentLoan.repaymentAmount).to.be.equal(loan.repaymentAmount);
+      expect(currentLoan.principal).to.be.equal(loan.principal);
+      expect(currentLoan.flowRate).to.be.equal(loan.flowRate);
+      expect(currentLoan.status).to.be.equal(0);
+      expect(currentLoan.startDate).to.be.gt(0);
     });
   });
 });
