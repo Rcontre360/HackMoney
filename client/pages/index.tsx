@@ -1,4 +1,4 @@
-import LandingComponent from "@shared/components/landing/LandingComponent";
+import LandingComponent from "@shared/components/landingPage/LandingComponent";
 import LayoutLanding from "@shared/layout/layoutLanding";
 import React from "react";
 

@@ -4,7 +4,7 @@ module.exports = {
     "./pages/**/*.{js,ts,jsx,tsx}",
     "./pages/*.{js,ts,jsx,tsx}",
   ],
-  plugins: [require("daisyui")],
+  // plugins: [require("daisyui")],
   theme: {
     screens: {
       sm: "640px",
