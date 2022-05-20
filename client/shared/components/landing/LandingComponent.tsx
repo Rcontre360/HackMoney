@@ -1,13 +1,13 @@
 import React from "react";
-import { StadisticsBoard } from "./StadisticsBoard/StadisticsBoard";
-import Table from "./table/table";
+import { StatisticsBoard } from "./StatisticsBoard";
+import LendingTable from "./LendingTable";
 
 const LandingComponent: React.FunctionComponent<{}> = (props) => {
   return (
     <div className="flex flex-col items-center">
-      <StadisticsBoard></StadisticsBoard>
-      <div className="w-full text-center">
-        <Table />
+      <StatisticsBoard></StatisticsBoard>
+      <div className="w-full text-center mb-10">
+        <LendingTable />
       </div>
     </div>
   );
