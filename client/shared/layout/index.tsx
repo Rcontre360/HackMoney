@@ -13,7 +13,7 @@ const Layout: React.FunctionComponent<Props> = ({children}) => {
           "transition duration-500 ease-in-out bg-white"
         )}
       >
-        <div className="text-primary f-24 font-black">
+        <div className="text-color1 f-24 font-black">
           <Link href="/">ChainScore</Link>
         </div>
         <div className="flex">
