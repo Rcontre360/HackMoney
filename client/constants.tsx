@@ -1,6 +1,6 @@
 export const MENU_ITEMS = [
   { title: 'Create DAO', url: '/createdao'},
-  { title: 'Item 2', url: '/'},
+  { title: 'Lending', url: '/lending'},
 ];
 
 export const TABLE_BODY = [
