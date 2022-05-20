@@ -7,10 +7,10 @@ interface Props {}
 
 const Layout: React.FunctionComponent<Props> = ({children}) => {
   return (
-    <>
+    <div style={{backgroundColor: '#525252'}}>
       <Navbar />
       <div style={{ scrollBehavior: "smooth" }}>{children}</div>
-    </>
+    </div>
   );
 };
 

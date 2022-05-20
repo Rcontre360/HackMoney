@@ -1,5 +1,5 @@
 export const MENU_ITEMS = [
-  { title: 'Item 1', url: '/'},
+  { title: 'Create DAO', url: '/createdao'},
   { title: 'Item 2', url: '/'},
 ];
 
