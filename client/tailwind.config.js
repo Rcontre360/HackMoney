@@ -4,7 +4,6 @@ module.exports = {
     "./pages/**/*.{js,ts,jsx,tsx}",
     "./pages/*.{js,ts,jsx,tsx}",
   ],
-  // plugins: [require("daisyui")],
   theme: {
     screens: {
       sm: "640px",
@@ -19,10 +18,10 @@ module.exports = {
       montserrat: ["Montserrat", "sans-serif"],
     },
     colors: ({ colors }) => ({
-      color1: "var(--color-primary)",
+      primary: "var(--color-primary)",
       "primary-disabled": "var(--color-primary-disabled)",
       "primary-opacity": "var(--color-primary-opacity)",
-      color2: "var(--color-secondary)",
+      secondary: "var(--color-secondary)",
       overlay: "var(--color-overlay)",
       "overlay-border": "var(--color-overlay-border)",
       alert: {

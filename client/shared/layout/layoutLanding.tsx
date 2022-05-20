@@ -15,7 +15,7 @@ const LayoutLanding: React.FunctionComponent<Props> = ({ children }) => {
       >
         <div className="text-primary f-24 font-black">
           <Link href="/">
-            <div className="flex gap-4">
+            <div className="flex text-primary gap-4">
               <img src={"/icons/logo.png"} className="h-8 w-8" alt="" />
               ChainScore
             </div>
