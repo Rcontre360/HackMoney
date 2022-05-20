@@ -1,3 +1,8 @@
+export const MENU_ITEMS = [
+  { title: 'Item 1', url: '/'},
+  { title: 'Item 2', url: '/'},
+];
+
 export const TABLE_BODY = [
   {
     dao: "Dao1",
@@ -8,41 +13,41 @@ export const TABLE_BODY = [
     token_usd: "320USD",
   },
   {
-    dao: "Dao1",
+    dao: "Dao2",
     pool: { value: "Pool1", id: 1 },
-    tokens_symbol: "DAO1TK",
+    tokens_symbol: "DAO2TK",
     tokens_saved: 40000,
     loan_created: 450,
     token_usd: "320USD",
   },
   {
-    dao: "Dao1",
+    dao: "Dao3",
     pool: { value: "Pool1", id: 1 },
-    tokens_symbol: "DAO1TK",
+    tokens_symbol: "DAO3TK",
     tokens_saved: 40000,
     loan_created: 450,
     token_usd: "320USD",
   },
   {
-    dao: "Dao1",
+    dao: "Dao4",
     pool: { value: "Pool1", id: 1 },
-    tokens_symbol: "DAO1TK",
-    tokens_saved: "DAO1TK",
+    tokens_symbol: "DAO4TK",
+    tokens_saved: "DAO4TK",
     loan_created: 450,
     token_usd: "320USD",
   },
   {
-    dao: "Dao1",
+    dao: "Dao5",
     pool: { value: "Pool1", id: 1 },
-    tokens_symbol: "DAO1TK",
+    tokens_symbol: "DAO5TK",
     tokens_saved: 40000,
     loan_created: 450,
     token_usd: "320USD",
   },
   {
-    dao: "Dao1",
+    dao: "Dao6",
     pool: { value: "Pool1", id: 1 },
-    tokens_symbol: "DAO1TK",
+    tokens_symbol: "DAO6TK",
     tokens_saved: 40000,
     loan_created: 450,
     token_usd: "320USD",
