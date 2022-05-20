@@ -36,14 +36,17 @@ const Navbar = () => {
   return (
     <div className="navbar bg-neutral text-neutral-content px-10 sticky top-0 z-50">
       <div className="flex flex-row gap-4 flex-1">
-        <div className="text-xl text-color1 f-24">
+        <div className="text-xl text-primary f-24">
           <Link className="" href="/">
             ChainScore
           </Link>
         </div>
         <ul className="menu menu-horizontal p-0">
           {MENU_ITEMS.map((k, i) => (
-            <li key={i} className="text-white hover:text-color1 hover:bg-color2 rounded">
+            <li
+              key={i}
+              className="text-white hover:text-primary hover:bg-secondary rounded"
+            >
               <Link href={k.url}>{k.title}</Link>
             </li>
           ))}
@@ -67,7 +70,7 @@ const Navbar = () => {
                   <p className="text-black text-sm overflow-hidden text-ellipsis w-1/2">
                     {account}
                   </p>
-                  <p className="text-color1 text-sm">Connected to Rinkeby</p>
+                  <p className="text-primary text-sm">Connected to Rinkeby</p>
                 </div>
               </div>
             ) : (

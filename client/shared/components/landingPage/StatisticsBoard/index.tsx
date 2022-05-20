@@ -8,7 +8,7 @@ export const StatisticsBoard = () => {
       {stats.map((item, i) => (
         <div className="stats shadow w-1/5" key={i}>
           <div className="stat flex flex-col items-center">
-            <div className="text-color1 stat-title f-20">{item.title}</div>
+            <div className="text-primary stat-title f-20">{item.title}</div>
             <div className="flex flex-row gap-4 items-center">
               <span className="stat-value">{item.stat.value}</span>
               <span className="stat-desc">{item.stat.subvalue}</span>

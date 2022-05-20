@@ -25,7 +25,7 @@ export const Toggle: React.FC<
         checked={enabled}
         onChange={setEnabled}
         className={`${
-          enabled ? "bg-color1" : "bg-gray-200"
+          enabled ? "bg-primary" : "bg-gray-200"
         } relative inline-flex items-center h-6 rounded-full w-11 outline-none focus:outline-none`}
       >
         <span className="sr-only">Enable notifications</span>

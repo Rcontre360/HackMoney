@@ -33,75 +33,75 @@ export const Button: React.FC<
 }) => {
 	// const refButtom = React.useRef<any>(null);
 	return (
-		<>
-			{href ? (
-				<Link href={href}>
-					<a>
-						<button
-							// ref={refButtom}
-							type="button"
-							disabled={disabled}
-							onClick={onClick}
-							className={clsx(
-								className,
-								'rounded-md focus:outline-none lh-16',
-								{ 'bg-color1 text-white': !disabled },
-								{
-									'bg-white text-color1 border-1 border-solid border-primary':
-										disabled,
-								},
-								Styles.button
-							)}
-							{...props}
-						>
-							{label ? (
-								<Typography type="smallTitle">
-									<div className="flex items-center">
-										{loading && <Spinner type="loadingButton" />}
-										<span className={clsx(labelProps, Styles.typography)}>
-											{label}
-										</span>
-									</div>
-								</Typography>
-							) : (
-								children
-							)}
-						</button>
-					</a>
-				</Link>
-			) : (
-				<button
-					// ref={refButtom}
-					type="button"
-					disabled={disabled}
-					onClick={onClick}
-					className={clsx(
-						className,
-						'text-base rounded-md focus:outline-none lh-16',
-						'bg-color1 text-white',
-						{
-							'cursor-not-allowed': disabled,
-						},
-						Styles.button
-					)}
-					{...props}
-				>
-					{label ? (
-						<Typography type="smallTitle">
-							<div className="flex items-center">
-								{loading && <Spinner type="loadingButton" />}
-								<span className={clsx(labelProps, Styles.typography)}>
-									{label}
-								</span>
-							</div>
-						</Typography>
-					) : (
-						children
-					)}
-				</button>
-			)}
-		</>
-	);
+    <>
+      {href ? (
+        <Link href={href}>
+          <a>
+            <button
+              // ref={refButtom}
+              type="button"
+              disabled={disabled}
+              onClick={onClick}
+              className={clsx(
+                className,
+                "rounded-md focus:outline-none lh-16",
+                { "bg-primary text-white": !disabled },
+                {
+                  "bg-white text-primary border-1 border-solid border-primary":
+                    disabled,
+                },
+                Styles.button
+              )}
+              {...props}
+            >
+              {label ? (
+                <Typography type="smallTitle">
+                  <div className="flex items-center">
+                    {loading && <Spinner type="loadingButton" />}
+                    <span className={clsx(labelProps, Styles.typography)}>
+                      {label}
+                    </span>
+                  </div>
+                </Typography>
+              ) : (
+                children
+              )}
+            </button>
+          </a>
+        </Link>
+      ) : (
+        <button
+          // ref={refButtom}
+          type="button"
+          disabled={disabled}
+          onClick={onClick}
+          className={clsx(
+            className,
+            "text-base rounded-md focus:outline-none lh-16",
+            "bg-primary text-white",
+            {
+              "cursor-not-allowed": disabled,
+            },
+            Styles.button
+          )}
+          {...props}
+        >
+          {label ? (
+            <Typography type="smallTitle">
+              <div className="flex items-center">
+                {loading && <Spinner type="loadingButton" />}
+                <span className={clsx(labelProps, Styles.typography)}>
+                  {label}
+                </span>
+              </div>
+            </Typography>
+          ) : (
+            children
+          )}
+        </button>
+      )}
+    </>
+  );
 };
 
 export const ButtonContent: React.FC<

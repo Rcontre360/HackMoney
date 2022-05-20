@@ -7,7 +7,7 @@ const LendingTable = () => {
 
   return (
     <div className="mx-10">
-      <h2 className="text-left text-color1 mb-4 text-3xl">
+      <h2 className="text-left text-primary mb-4 text-3xl">
         ChainScore Lending
       </h2>
 
@@ -28,7 +28,7 @@ const LendingTable = () => {
           {body.map((item, i) => (
             <tr key={i} className="border-b border-gray-300 text-center hover">
               <td className="px-6 py-10 whitespace-nowrap f-18">{item.dao}</td>
-              <td className="px-6 py-10 whitespace-nowrap text-color1 f-20 text-center">
+              <td className="px-6 py-10 whitespace-nowrap text-primary f-20 text-center">
                 <a
                   href={`/poolForm/${item.pool.id}`}
                   className="whitespace-nowrap"
