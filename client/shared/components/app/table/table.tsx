@@ -71,7 +71,7 @@ const Table = () => {
           Styles.containerTable
         )}
       >
-        <h2 className="text-left text-primary mb-4 text-3xl">
+        <h2 className="text-left text-color1 mb-4 text-3xl">
           ChainScore Lending
         </h2>
         <div className="overflow-x-auto w-full">
@@ -83,9 +83,7 @@ const Table = () => {
                     {headers.map((head) => (
                       <th
                         scope="col"
-                        className={clsx(
-                          "p-4 text-md font-normal text-gray-600"
-                        )}
+                        className={clsx("p-4 text-md font-normal text-white")}
                       >
                         {head}
                       </th>
@@ -96,10 +94,10 @@ const Table = () => {
                   {body.map((item, i) => {
                     return (
                       <tr className="border border-gray-300">
-                        <td className="px-6 py-10 whitespace-nowrap f-18">
+                        <td className="px-6 py-10 whitespace-nowrap text-white f-18">
                           {item.dao}
                         </td>
-                        <td className="px-6 py-10 whitespace-nowrap text-primary f-20 text-center">
+                        <td className="px-6 py-10 whitespace-nowrap text-color1 f-20 text-center">
                           <Link
                             href={`/app/poolForm/${item.pool.id}`}
                             className="whitespace-nowrap"
@@ -107,16 +105,16 @@ const Table = () => {
                             {item.pool.value}
                           </Link>
                         </td>
-                        <td className="px-6 py-10 whitespace-nowrap f-18 text-center">
+                        <td className="px-6 py-10 whitespace-nowrap text-white f-18 text-center">
                           {item.tokens_symbol}
                         </td>
-                        <td className="px-6 py-10 whitespace-nowrap f-18 text-center">
+                        <td className="px-6 py-10 whitespace-nowrap text-white f-18 text-center">
                           {item.tokens_saved}
                         </td>
-                        <td className="px-6 py-10 whitespace-nowrap f-18 text-center">
+                        <td className="px-6 py-10 whitespace-nowrap text-white f-18 text-center">
                           {item.loan_created}
                         </td>
-                        <td className="px-6 py-10 whitespace-nowrap f-18 text-center">
+                        <td className="px-6 py-10 whitespace-nowrap text-white f-18 text-center">
                           {item.token_usd}
                         </td>
                       </tr>

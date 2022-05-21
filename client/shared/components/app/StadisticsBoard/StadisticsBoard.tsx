@@ -29,10 +29,10 @@ export const StadisticsBoard = () => {
 const StatBox = ({ title, stat }) => {
   return (
     <div className="p-4 rounded-md border border-gray-300 flex flex-col w-56">
-      <div className="f-20 text-primary">{title}</div>
+      <div className="f-20 text-color1">{title}</div>
       <div className="flex gap-1 items-end">
-        <div className="f-18 font-normal">{stat.value}</div>
-        <div className="f-18 font-thin">{stat.subvalue}</div>
+        <div className="f-18 font-normal text-white">{stat.value}</div>
+        <div className="f-18 font-thin text-white">{stat.subvalue}</div>
       </div>
     </div>
   );

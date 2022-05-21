@@ -27,7 +27,7 @@
 // }
 
 // .checkbox + label:before {
-// 	background-color: var(--color-primary);
+// 	background-color: var(--color-color1);
 // 	border-radius: 2px;
 // 	bottom: 0;
 // 	content: '';
@@ -45,7 +45,7 @@
 // }
 // .checkbox:checked + label {
 // 	transition: all 0.4s;
-// 	border: 1px solid var(--color-primary);
+// 	border: 1px solid var(--color-color1);
 // }
 // .checkbox:checked + label:before {
 // 	transition: all 0.4s cubic-bezier(1, 0, 0.4, 1);

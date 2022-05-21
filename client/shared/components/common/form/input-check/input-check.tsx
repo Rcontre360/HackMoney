@@ -20,7 +20,7 @@ export const InputCheck: React.FC<
           <input
             className={clsx(
               styles.checkbox,
-              "2xl:h-7 2xl:w-7 w-5 h-5 rounded-md border-primary"
+              "2xl:h-7 2xl:w-7 w-5 h-5 rounded-md border-color1"
             )}
             type="checkbox"
             id={name}

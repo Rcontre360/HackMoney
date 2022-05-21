@@ -61,7 +61,11 @@ export const PoolFormComponent: React.FC = () => {
           <div className={clsx("w-full")}>
             <div className="  ">
               <div>
-                <h4 className={clsx("f-24 text-center font-bold mb-2")}>
+                <h4
+                  className={clsx(
+                    "f-24 text-center text-color1 font-bold mb-2"
+                  )}
+                >
                   Create Loan Detail
                 </h4>
               </div>

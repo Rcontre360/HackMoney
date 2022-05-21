@@ -10,12 +10,12 @@ const LayoutLanding: React.FunctionComponent<Props> = ({ children }) => {
       <nav
         className={clsx(
           "fixed top-0 flex items-center justify-between z-50 w-full shadow-lg p-4",
-          "transition duration-500 ease-in-out bg-secondary h-16"
+          "transition duration-500 ease-in-out bg-color2 h-16"
         )}
       >
-        <div className="text-primary f-24 font-black">
+        <div className="text-color1 f-24 font-black">
           <Link href="/">
-            <div className="flex text-primary gap-4">
+            <div className="flex text-color1 gap-4">
               <img src={"/icons/logo.png"} className="h-8 w-8" alt="" />
               ChainScore
             </div>
@@ -23,7 +23,7 @@ const LayoutLanding: React.FunctionComponent<Props> = ({ children }) => {
         </div>
         <div className="flex">
           <div className="text-sm flex">
-            <div className="mr-6 bg-primary text-white px-4 py-2 rounded-md">
+            <div className="mr-6 bg-color1 text-white px-4 py-2 rounded-md">
               <Link href="/app">Earn with us</Link>
             </div>
           </div>

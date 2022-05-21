@@ -15,7 +15,7 @@ const Step1 = ({ selectOrgType, selectStep }) => {
         onClick={() => {
           selectOpt("new");
         }}
-        className="btn bg-primary flex flex-col items-center h-[100px]"
+        className="btn bg-color1 flex flex-col items-center h-[100px]"
       >
         <p className="text-white text-xl">Create an organization</p>
         <p className="text-white text-xl">
@@ -26,7 +26,7 @@ const Step1 = ({ selectOrgType, selectStep }) => {
         onClick={() => {
           selectOpt("existing");
         }}
-        className="btn bg-primary flex flex-col items-center"
+        className="btn bg-color1 flex flex-col items-center"
       >
         <p className="text-white">Open an existing organization</p>
       </button>
@@ -55,7 +55,7 @@ const Step2 = ({ orgName, selectOrgName, selectStep }) => {
 
         <div className="flex flex-row justify-evenly gap-4">
           <button
-            className="btn bg-primary text-white"
+            className="btn bg-color1 text-white"
             onClick={() => {
               selectStep(0);
             }}
@@ -64,7 +64,7 @@ const Step2 = ({ orgName, selectOrgName, selectStep }) => {
           </button>
 
           <button
-            className="btn bg-primary text-white"
+            className="btn bg-color1 text-white"
             onClick={() => {
               selectStep(2);
             }}
@@ -99,8 +99,8 @@ const Step3 = ({ orgTemplate, selectOrgTemplate, selectStep }) => {
                 selectOrgTemplate(k.value);
               }}
               className={clsx(
-                "btn text-white bg-primary",
-                orgTemplate === k.value && "bg-secondary"
+                "btn text-white bg-color1",
+                orgTemplate === k.value && "bg-color2"
               )}
             >
               {k.title}
@@ -173,8 +173,8 @@ const Step4 = ({ setTokenDetails, selectStep }) => {
 
   return (
     <div className="flex flex-col items-center justify-center h-full">
-      <div className="flex flex-col gap-4 card w-96 bg-secondary text-primary-content overflow-scroll mb-10">
-        <div className="sticky top-0 bg-primary w-full px-10 py-5">
+      <div className="flex flex-col gap-4 card w-96 bg-color2 text-color1-content overflow-scroll mb-10">
+        <div className="sticky top-0 bg-color1 w-full px-10 py-5">
           <h3 className="text-white text-center">
             CHOOSE YOUR TOKENS SETTINGS BELOW
           </h3>
@@ -219,7 +219,7 @@ const Step4 = ({ setTokenDetails, selectStep }) => {
           <div className="flex flex-col gap-4">
             <div className="flex flex-row justify-between items-center">
               <p className="text-white">TOKEN HOLDERS</p>
-              <button className="btn bg-primary w-24" onClick={addMore}>
+              <button className="btn bg-color1 w-24" onClick={addMore}>
                 <span className="gradient-text">Add more</span>
               </button>
             </div>
@@ -252,7 +252,7 @@ const Step5 = ({ setComplete }) => {
         </p>
       </div>
       <button
-        className="btn bg-primary"
+        className="btn bg-color1"
         onClick={() => {
           setComplete(true);
         }}

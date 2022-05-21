@@ -13,19 +13,19 @@ export const MainSection: React.FC = () => {
       <div className="md:w-1/2">
         <h1
           className={clsx(
-            "f-58 lh-80 font-extrabold text-white pb-5 text-primary Lato"
+            "f-58 lh-80 font-extrabold text-white pb-5 text-color1 Lato"
           )}
         >
-          Make The Best With Your <span className="text-primary">Crypto</span>{" "}
-          and Get <span className="text-primary">Credited</span> for it
+          Make The Best With Your <span className="text-color1">Crypto</span>{" "}
+          and Get <span className="text-color1">Credited</span> for it
         </h1>
         <p className={clsx("f-24 font-thin text-white")}>
           Get your on-chain score and get truely trustworthy uncollateralized
-          loans for <span className="text-primary">DAOs</span>
+          loans for <span className="text-color1">DAOs</span>
         </p>
         <div className={clsx("container-button w-full text-left mt-6")}>
           <Button
-            href="/selectCity"
+            href="/app"
             className={clsx("font-bold w-min whitespace-nowrap w-full")}
           >
             Earn with us
