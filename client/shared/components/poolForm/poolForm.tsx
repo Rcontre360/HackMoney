@@ -1,24 +1,29 @@
 import * as React from "react";
-import { Button } from "../common/button";
-import { InputText } from "../common/form/input-text";
+import {Button} from "../common/button";
+import {InputText} from "../common/form/input-text";
 // import { InputEmail } from "../common/form/input-email";
 import getWeb3 from "../../getWeb3";
 import clsx from "clsx";
 import Styles from "./styles.module.scss";
-import { SelectInputForm } from "../common/form/select/SelectInputForm";
-import { InputDatePicker } from "../common/form/input-datepicker";
+import {SelectInputForm} from "../common/form/select/SelectInputForm";
+import {InputDatePicker} from "../common/form/input-datepicker";
 
-import { createLoan } from "@shared/utils/protocol";
+import {createLoan} from "@shared/utils/protocol";
 
 export const PoolFormComponent: React.FC = () => {
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
   const [isLoadingWallet, setIsLoadingWallet] = React.useState<boolean>(false);
   const [web3, setWeb3] = React.useState(null);
   const [accounts, setAccounts] = React.useState(null);
-  const [data, setData] = React.useState({
+  const [data, setData] = React.useState<{
+    principal: string;
+    repaymentAmount: string;
+    borrower: string;
+    frequecy: "per_day" | "per_week" | "per_month" | "per_year";
+  }>({
     principal: "",
     repaymentAmount: "",
-    frequency: "",
+    frequecy: "per_month",
     borrower: "",
   });
   const [loanEndDate, setLoanEndDate] = React.useState("");
@@ -29,6 +34,20 @@ export const PoolFormComponent: React.FC = () => {
 
   const onSubmit = async () => {
     setIsLoading(true);
+    const day = 24 * 3600;
+    const secondsPerPayment = {
+      per_day: day,
+      per_week: 7 * day,
+      per_month: 30 * day,
+      per_year: 365 * day,
+    };
+    const loan = {
+      ...data,
+      pool: "",
+      flowRate: Number(data.repaymentAmount) / secondsPerPayment[data.frequecy],
+    };
+    await createLoan(loan, "mumbai");
+    setIsLoading(false);
   };
 
   const connectWallet = async () => {
@@ -60,20 +79,12 @@ export const PoolFormComponent: React.FC = () => {
         "relative w-full flex flex-col items-center justify-center pt-20 min-h-screen"
       )}
     >
-      <div
-        className={clsx(
-          "relative flex sm:flex-row items-start justify-between "
-        )}
-      >
+      <div className={clsx("relative flex sm:flex-row items-start justify-between ")}>
         <div className={clsx("bg-gray-4 rounded-10 shadow-generic")}>
           <div className={clsx("w-full")}>
             <div className="  ">
               <div>
-                <h4
-                  className={clsx(
-                    "f-24 text-center text-color1 font-bold mb-2"
-                  )}
-                >
+                <h4 className={clsx("f-24 text-center text-color1 font-bold mb-2")}>
                   Create Loan Detail
                 </h4>
               </div>
@@ -87,8 +98,8 @@ export const PoolFormComponent: React.FC = () => {
                       isLoadingWallet
                         ? undefined
                         : () => {
-                            connectWallet();
-                          }
+                          connectWallet();
+                        }
                     }
                     // type="submit"
                     disabled={isLoadingWallet}
@@ -104,49 +115,46 @@ export const PoolFormComponent: React.FC = () => {
                   // value={data.borrower}
                   // onChange={(e) => addField("borrower", e.target.value)}
                   readOnly
-                  value={
-                    accounts !== null && accounts.length !== 0
-                      ? accounts[0]
-                      : ""
-                  }
+                  value={data.borrower}
+                  onChangeCustom={(e) => addField("borrower", e.target.value)}
                 />
                 <InputText
                   type="number"
                   name="payment"
                   placeholder="Principal amount"
-                  onChangeCustom={(e) =>
-                    setData({ ...data, principal: e.target.value })
-                  }
+                  onChangeCustom={(e) => setData({...data, principal: e.target.value})}
                   // title={"Payment Amount (ETH)"}
                   className={clsx("font-bold")}
+                  value={data.principal}
+                  onChangeCustom={(e) => addField("principal", e.target.value)}
                 />
                 <InputText
                   type="number"
                   name="repayment"
                   placeholder="Re-Payment Amount (ETH)"
-                  onChangeCustom={(e) =>
-                    setData({ ...data, repaymentAmount: e.target.value })
-                  }
+                  onChangeCustom={(e) => setData({...data, repaymentAmount: e.target.value})}
                   // title={"Re-Payment Amount (ETH)"}
                   className={clsx("font-bold")}
+                  value={data.repaymentAmount}
+                  onChangeCustom={(e) => addField("repaymentAmount", e.target.value)}
                 />
 
                 <SelectInputForm
                   arrayValues={[
-                    { value: "per_day", title: "Per Day" },
-                    { value: "per_week", title: "Per Week" },
-                    { value: "per_month", title: "Per Month" },
-                    { value: "per_year", title: "Per Year" },
+                    {value: "per_day", title: "Per Day"},
+                    {value: "per_week", title: "Per Week"},
+                    {value: "per_month", title: "Per Month"},
+                    {value: "per_year", title: "Per Year"},
                   ]}
                   type="number"
                   name="paymentFrequency"
                   title="Payment Frequency"
                   // title={"Payment Frequency"}
                   // labelVisible
-                  onChangeCustom={(e) =>
-                    setData({ ...data, frequency: e.target.value })
-                  }
+                  onChangeCustom={(e) => setData({...data, frequency: e.target.value})}
                   className={clsx("font-bold")}
+                  value={data.frequecy}
+                  onChangeCustom={(e) => addField("frequecy", e.target.value)}
                 />
                 <InputDatePicker
                   name="endDate"
@@ -165,8 +173,8 @@ export const PoolFormComponent: React.FC = () => {
                       isLoading
                         ? undefined
                         : () => {
-                            onSubmit();
-                          }
+                          onSubmit();
+                        }
                     }
                     // type="submit"
                     disabled={isLoading}
