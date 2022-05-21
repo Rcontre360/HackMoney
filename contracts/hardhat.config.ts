@@ -39,6 +39,12 @@ const config: HardhatUserConfig = {
       accounts: [process.env.PRIVATE_KEY || ""],
       timeout: 100000,
     },
+    kovan: {
+      chainId: 42,
+      url: process.env.KOVAN_PROVIDER,
+      accounts: [process.env.PRIVATE_KEY || ""],
+      timeout: 100000,
+    },
     // ganache: {
     //   url: "http://127.0.0.1:8545",
     //   accounts: {
