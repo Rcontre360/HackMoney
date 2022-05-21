@@ -8,7 +8,7 @@ interface Props {}
 
 const Layout: React.FunctionComponent<Props> = ({ children }) => {
   return (
-    <div className={clsx(Styles.containerAll, "bg-color1")}>
+    <div className={clsx(Styles.containerAll, "bg-color2")}>
       <Navbar />
       <div style={{ scrollBehavior: "smooth" }}>{children}</div>
     </div>

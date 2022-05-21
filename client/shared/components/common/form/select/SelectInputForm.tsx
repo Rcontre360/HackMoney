@@ -32,7 +32,7 @@ export const SelectInputForm: React.FC<
                 error,
             },
             " disabled:placeholder-white disabled:cursor-not-allowed disabled:text-gray-500",
-            "block w-full bg-white pb-4 pt-4 pl-3 pr-10 text-base text-gray-500 font-montserrat border f-17 border-gray-500 w-full",
+            "block w-full bg-transparent pb-4 pt-4 pl-3 pr-10 text-base text-gray-500 font-montserrat border f-17 border-gray-500 w-full",
             "focus:outline-none focus:ring-transparent rounded-md"
           )}
           //   ref={registerAux && registerAux.ref}
