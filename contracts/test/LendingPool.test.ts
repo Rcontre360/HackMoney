@@ -77,7 +77,7 @@ describe("LendingPool", () => {
 
     await superToken.approve(lendingPool.address, loan.principal);
     await lendingPool.deposit(loan.principal);
-    //dao approves flow
+
     await approveFlow(hre, {sender: other, manager: dao.address, superToken, flowRate: 0, superfluid});
 
     const host = <Superfluid>await attach(hre, "Superfluid", superfluid.contracts.host.address);
@@ -85,7 +85,6 @@ describe("LendingPool", () => {
       await attach(hre, "ConstantFlowAgreementV1", superfluid.contracts.cfaV1.address)
     );
 
-    //other inits flow and creates loan
     await host
       .connect(dao)
       .callAgreement(

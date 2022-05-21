@@ -33,16 +33,12 @@ export const createFlow = async ({
 };
 
 export const approveFlow = async ({
-  sender,
   manager,
   superToken,
-  flowRate,
   network,
 }: {
-  sender: SignerWithAddress;
   manager: string;
   superToken: Contract;
-  flowRate: BigNumberish;
   network: string;
 }) => {
   const {addresses} = getNetworkConfig(network);
@@ -56,7 +52,7 @@ export const approveFlow = async ({
     [],
   ]);
 
-  return await host.connect(sender).callAgreement(cfa, callData, "0x");
+  return await host.callAgreement(cfa, callData, "0x");
 };
 
 export const getFramework = async (network: string) => {
