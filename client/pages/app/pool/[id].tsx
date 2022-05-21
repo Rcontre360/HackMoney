@@ -1,11 +1,11 @@
-import { PoolFormComponent } from "@shared/components/poolForm/poolForm";
+import PoolDetailComponent from "@shared/components/app/poolDetail/poolDetail";
 import Layout from "@shared/layout";
 // import React from "react";
 
 const PoolForm = () => {
   return (
     <Layout>
-      <PoolFormComponent />
+      <PoolDetailComponent />
     </Layout>
   );
 };
