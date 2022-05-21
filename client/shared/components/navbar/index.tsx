@@ -37,7 +37,7 @@ const Navbar = () => {
     <div className="navbar bg-color2 shadow-md text-neutral-content px-10 sticky top-0 z-50">
       <div className="flex flex-row gap-4 flex">
         <Link href="/app">
-          <div className="flex text-color1 gap-4">
+          <div className="flex items-center cursor-pointer text-color1 gap-4">
             <img src={"/icons/logo.png"} className="h-8 w-8" alt="" />
             ChainScore
           </div>
