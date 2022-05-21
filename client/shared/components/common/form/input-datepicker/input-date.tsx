@@ -58,10 +58,10 @@ export const InputDatePicker: React.FC<any> = ({
                 className,
                 Styles.input,
                 { "text-color1": value.length != 0 },
-                { "text-gray-5": value.length == 0 },
+                { "text-color1": value.length == 0 },
                 { "border-status-error text-status-error": error?.error },
                 { "border-color1": value[1] },
-                { "border-gray-1": !value[1] && !error?.error },
+                { "border-gray-500": !value[1] && !error?.error },
                 "py-3 mt-2 w-full f-17 border  rounded-md"
               )}
               onClick={openCalendar}
