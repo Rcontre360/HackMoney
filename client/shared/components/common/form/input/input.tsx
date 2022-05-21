@@ -65,7 +65,7 @@ export const Input: React.FC<
             },
             !!isFill && styles.inputDateWithValue,
             styles.inputStyles,
-            "py-3 placeholder-gray-500 mt-2 w-full text-gray-800 f-17 border rounded-md",
+            "py-3 placeholder-color1 mt-2 w-full text-color1 f-17 border rounded-md",
             "disabled:placeholder-gray-800 disabled:bg-gray-200 disabled:cursor-not-allowed disabled:text-gray-800",
             "focus:outline-none focus:bg-transparent focus:ring-offset-transparent focus:ring-opacity-0 focus:border-gray-5 focus:ring-white"
           )}

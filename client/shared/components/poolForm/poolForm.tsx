@@ -6,6 +6,7 @@ import getWeb3 from "../../getWeb3";
 import clsx from "clsx";
 import Styles from "./styles.module.scss";
 import { SelectInputForm } from "../common/form/select/SelectInputForm";
+import { InputDatePicker } from "../common/form/input-datepicker";
 
 export const PoolFormComponent: React.FC = () => {
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
@@ -15,9 +16,13 @@ export const PoolFormComponent: React.FC = () => {
   const [data, setData] = React.useState({
     paymentRate: "",
     rePaymentRate: "",
-    frequecy: "",
-    loanEndDate: "",
+    frequency: "",
   });
+  const [loanEndDate, setLoanEndDate] = React.useState("");
+
+  React.useEffect(() => {
+    console.log(data, loanEndDate);
+  }, [data, loanEndDate]);
 
   const onSubmit = async () => {
     setIsLoading(true);
@@ -93,6 +98,7 @@ export const PoolFormComponent: React.FC = () => {
                   placeholder="Borrower *"
                   className={clsx("font-bold")}
                   // title={"Borrower"}
+
                   readOnly
                   value={
                     accounts !== null && accounts.length !== 0
@@ -105,6 +111,9 @@ export const PoolFormComponent: React.FC = () => {
                   type="number"
                   name="repayment"
                   placeholder="Re-Payment Amount (ETH)"
+                  onChangeCustom={(e) =>
+                    setData({ ...data, rePaymentRate: e.target.value })
+                  }
                   // title={"Re-Payment Amount (ETH)"}
                   className={clsx("font-bold")}
                 />
@@ -113,6 +122,9 @@ export const PoolFormComponent: React.FC = () => {
                   type="number"
                   name="payment"
                   placeholder="Payment Amount (ETH)"
+                  onChangeCustom={(e) =>
+                    setData({ ...data, paymentRate: e.target.value })
+                  }
                   // title={"Payment Amount (ETH)"}
                   className={clsx("font-bold")}
                 />
@@ -129,12 +141,17 @@ export const PoolFormComponent: React.FC = () => {
                   title="Payment Frequency"
                   // title={"Payment Frequency"}
                   // labelVisible
+                  onChangeCustom={(e) =>
+                    setData({ ...data, frequency: e.target.value })
+                  }
                   className={clsx("font-bold")}
                 />
-                <InputText
+                <InputDatePicker
                   name="endDate"
                   placeholder="Loan End Date"
                   // title={"Loan End Date"}
+                  setValues={setLoanEndDate}
+                  value={loanEndDate}
                   className={clsx("font-bold")}
                 />
 
