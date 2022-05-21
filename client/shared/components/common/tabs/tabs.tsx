@@ -27,27 +27,27 @@ export const Tabs: React.FC<TabsProps> = ({
 			<nav className="flex flex-row">
 				{itemsNavigation.map((item: ItemType, key) => {
 					return (
-						<button
-							key={key}
-							className={clsx(
-								'text-gray-500 py-4 mr-10 block focus:outline-none',
-								{
-									'border-b-2  border-primary': item.enum === currentNavigation,
-								},
-								{ ' font-semibold': item.enum === currentNavigation },
-								{ ' font-medium': item.enum !== currentNavigation },
-								'f-18'
-							)}
-							onClick={() => {
-								if (item.enum !== currentNavigation) {
-									setNavigation(item.enum);
-									if (taskBonus) taskBonus(item);
-								}
-							}}
-						>
-							{item.option}
-						</button>
-					);
+            <button
+              key={key}
+              className={clsx(
+                "text-gray-500 py-4 mr-10 block focus:outline-none",
+                {
+                  "border-b-2  border-color1": item.enum === currentNavigation,
+                },
+                { " font-semibold": item.enum === currentNavigation },
+                { " font-medium": item.enum !== currentNavigation },
+                "f-18"
+              )}
+              onClick={() => {
+                if (item.enum !== currentNavigation) {
+                  setNavigation(item.enum);
+                  if (taskBonus) taskBonus(item);
+                }
+              }}
+            >
+              {item.option}
+            </button>
+          );
 				})}
 			</nav>
 		</div>

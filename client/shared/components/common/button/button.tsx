@@ -16,7 +16,7 @@ export interface ButtonProps {
 }
 
 /**
- * Primary UI component for user interaction
+ * color1 UI component for user interaction
  */
 export const Button: React.FC<
 	ButtonProps & React.ButtonHTMLAttributes<HTMLButtonElement>
@@ -45,9 +45,9 @@ export const Button: React.FC<
               className={clsx(
                 className,
                 "rounded-md focus:outline-none lh-16",
-                { "bg-primary text-white": !disabled },
+                { "bg-color1 text-white": !disabled },
                 {
-                  "bg-white text-primary border-1 border-solid border-primary":
+                  "bg-white text-color1 border-1 border-solid border-color1":
                     disabled,
                 },
                 Styles.button
@@ -78,7 +78,7 @@ export const Button: React.FC<
           className={clsx(
             className,
             "text-base rounded-md focus:outline-none lh-16",
-            "bg-primary text-white",
+            "bg-color1 text-white",
             {
               "cursor-not-allowed": disabled,
             },

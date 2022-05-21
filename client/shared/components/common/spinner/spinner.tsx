@@ -8,7 +8,7 @@ export interface SpinnerProps {
 }
 
 /**
- * Primary UI component for user interaction
+ * color1 UI component for user interaction
  */
 export const Spinner: React.FC<SpinnerProps> = ({ type }) => {
 	return (

@@ -82,7 +82,7 @@ export const InputDatePicker: React.FC<any> = ({
                 { "text-gray-8": value.length != 0 },
                 { "text-gray-5": value.length == 0 },
                 { "border-status-error text-status-error": error.error },
-                { "border-primary": value[1] },
+                { "border-color1": value[1] },
                 { "border-gray-1": !value[1] && !error.error },
                 "py-3 mt-2 w-full f-17 border  rounded-md"
               )}
@@ -112,7 +112,7 @@ export const InputDatePicker: React.FC<any> = ({
         className={clsx(
           Styles.tooltip,
           "absolute flex items-center justify-center text-white right-4 2xl:w-6 2xl:h-6 w-5 h-5 f-14",
-          "rounded-full bg-primary cursor-pointer"
+          "rounded-full bg-color1 cursor-pointer"
         )}
       >
         !{" "}

@@ -34,9 +34,9 @@ const Navbar = () => {
   }, [wallet.status]);
 
   return (
-    <div className="navbar bg-neutral text-neutral-content px-10 sticky top-0 z-50">
-      <div className="flex flex-row gap-4 flex-1">
-        <div className="text-xl text-primary f-24">
+    <div className="navbar bg-color2 shadow-md text-neutral-content px-10 sticky top-0 z-50">
+      <div className="flex flex-row gap-4 flex">
+        <div className="text-xl text-color1 f-24">
           <Link className="" href="/">
             ChainScore
           </Link>
@@ -45,18 +45,18 @@ const Navbar = () => {
           {MENU_ITEMS.map((k, i) => (
             <li
               key={i}
-              className="text-white hover:text-primary hover:bg-secondary rounded"
+              className="text-white hover:text-color1 hover:bg-color2 rounded"
             >
               <Link href={k.url}>{k.title}</Link>
             </li>
           ))}
         </ul>
       </div>
-      <div className="flex-1 justify-end">
+      <div className="flex ml-auto justify-end">
         <ul className="menu menu-horizontal p-0">
           <li>
             {wallet.status === "connected" ? (
-              <div className="flex flex-row bg-white rounded-lg w-[240px] p-2">
+              <div className="flex flex-row bg-white rounded-lg w-auto p-2">
                 <img
                   src={blockie}
                   style={{
@@ -67,10 +67,12 @@ const Navbar = () => {
                   }}
                 />
                 <div>
-                  <p className="text-black text-sm overflow-hidden text-ellipsis w-1/2">
+                  <p className="text-black text-sm overflow-hidden text-ellipsis w-36">
                     {account}
                   </p>
-                  <p className="text-primary text-sm">Connected to Rinkeby</p>
+                  <p className="text-color1 text-sm w-auto">
+                    Connected to Rinkeby
+                  </p>
                 </div>
               </div>
             ) : (

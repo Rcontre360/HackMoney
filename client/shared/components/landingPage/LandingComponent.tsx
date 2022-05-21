@@ -7,7 +7,9 @@ import Styles from "./styles.module.scss";
 
 const LandingComponent: React.FunctionComponent<{}> = (props) => {
   return (
-    <div className={clsx("flex flex-col items-center", Styles.gradient)}>
+    <div
+      className={clsx("flex flex-col items-center bg-color2", Styles.gradient)}
+    >
       <MainSection />
       <About />
       <About1 />

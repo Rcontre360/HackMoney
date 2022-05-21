@@ -16,17 +16,17 @@ export const About: React.FC = () => {
       <div className="md:w-1/2">
         <h1
           className={clsx(
-            "f-52 lh-80 font-extrabold text-white pb-5 text-secondary Lato"
+            "f-52 lh-80 font-extrabold text-white pb-5 text-color2 Lato"
           )}
         >
           About Us
         </h1>
-        <p className={clsx("f-24 pb-5 font-thin text-secondary text-white")}>
+        <p className={clsx("f-24 pb-5 font-thin text-color2 text-white")}>
           ChainScore is a protocol for uncollateralized lending, powered by an
-          <span className="text-primary"> on-chain credit score.</span>
+          <span className="text-color1"> on-chain credit score.</span>
         </p>
-        <p className={clsx("f-24 font-thin text-secondary text-white")}>
-          Supporting <span className="text-primary">DAOs</span> and their
+        <p className={clsx("f-24 font-thin text-color2 text-white")}>
+          Supporting <span className="text-color1">DAOs</span> and their
           Ecosystems for them to thrive.
         </p>
       </div>
@@ -42,12 +42,12 @@ export const About1: React.FC = () => {
       )}
     >
       <div className="md:w-1/2">
-        <p className={clsx("f-24 font-thin pb-5 text-secondary text-white")}>
-          <span className="text-primary">Innovating </span>
+        <p className={clsx("f-24 font-thin pb-5 text-color2 text-white")}>
+          <span className="text-color1">Innovating </span>
           driven by community needs.
         </p>
-        <p className={clsx("f-24 font-thin pb-5 text-secondary text-white")}>
-          <span className="text-primary">Building Resilience </span>
+        <p className={clsx("f-24 font-thin pb-5 text-color2 text-white")}>
+          <span className="text-color1">Building Resilience </span>
           into the communities.
         </p>
       </div>

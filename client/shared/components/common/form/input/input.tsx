@@ -61,7 +61,7 @@ export const Input: React.FC<
 
             { "bg-transparent border-gray-500 ": !isFill },
             {
-              "bg-transparent-color-gray-200 border-primary": isFill && !error,
+              "bg-transparent-color-gray-200 border-color1": isFill && !error,
             },
             !!isFill && styles.inputDateWithValue,
             styles.inputStyles,
