@@ -99,7 +99,7 @@ const Table = () => {
                         </td>
                         <td className="px-6 py-10 whitespace-nowrap text-color1 f-20 text-center">
                           <Link
-                            href={`/app/poolForm/${item.pool.id}`}
+                            href={`/app/pool/${item.pool.id}`}
                             className="whitespace-nowrap"
                           >
                             {item.pool.value}

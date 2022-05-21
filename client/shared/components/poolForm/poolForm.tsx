@@ -6,6 +6,7 @@ import getWeb3 from "../../getWeb3";
 import clsx from "clsx";
 import Styles from "./styles.module.scss";
 import {SelectInputForm} from "../common/form/select/SelectInputForm";
+import {InputDatePicker} from "../common/form/input-datepicker";
 
 import {createLoan} from "@shared/utils/protocol";
 
@@ -25,8 +26,14 @@ export const PoolFormComponent: React.FC = () => {
     frequecy: "per_month",
     borrower: "",
   });
+  const [loanEndDate, setLoanEndDate] = React.useState("");
+
+  React.useEffect(() => {
+    console.log(data, loanEndDate);
+  }, [data, loanEndDate]);
 
   const onSubmit = async () => {
+    setIsLoading(true);
     const day = 24 * 3600;
     const secondsPerPayment = {
       per_day: day,
@@ -40,9 +47,8 @@ export const PoolFormComponent: React.FC = () => {
       flowRate: Number(data.repaymentAmount) / secondsPerPayment[data.frequecy],
     };
     await createLoan(loan, "mumbai");
+    setIsLoading(false);
   };
-
-  const addField = (key: keyof typeof data, value: string) => {};
 
   const connectWallet = async () => {
     setIsLoadingWallet(true);
@@ -54,9 +60,8 @@ export const PoolFormComponent: React.FC = () => {
       setWeb3(web3);
       accounts.push(accounts[0]);
       accounts[0] = (window as any).ethereum.selectedAddress;
+      //setContract(contract);
       setAccounts(accounts);
-
-      addField("borrower", accounts[0]);
       setIsLoadingWallet(false);
     } catch (error) {
       // Catch any errors for any of the above operations.
@@ -67,10 +72,6 @@ export const PoolFormComponent: React.FC = () => {
       setIsLoadingWallet(false);
     }
   };
-
-  React.useEffect(() => {
-    connectWallet();
-  });
 
   return (
     <div
@@ -88,32 +89,51 @@ export const PoolFormComponent: React.FC = () => {
                 </h4>
               </div>
 
+              {(accounts == null || accounts.length === 0) && !isLoadingWallet && (
+                <div className={clsx("flex justify-center mb-2")}>
+                  <Button
+                    labelProps={clsx("font-bold")}
+                    label={"Connect Wallet"}
+                    onClick={
+                      isLoadingWallet
+                        ? undefined
+                        : () => {
+                          connectWallet();
+                        }
+                    }
+                    // type="submit"
+                    disabled={isLoadingWallet}
+                  />
+                </div>
+              )}
               <form className="w-80">
                 <InputText
                   name="fullName"
                   placeholder="Borrower *"
                   className={clsx("font-bold")}
                   // title={"Borrower"}
+                  // value={data.borrower}
+                  // onChange={(e) => addField("borrower", e.target.value)}
                   readOnly
                   value={data.borrower}
                   onChangeCustom={(e) => addField("borrower", e.target.value)}
                 />
-
                 <InputText
                   type="number"
-                  name="repayment"
+                  name="payment"
                   placeholder="Principal amount"
-                  // title={"Re-Payment Amount (ETH)"}
+                  onChangeCustom={(e) => setData({...data, principal: e.target.value})}
+                  // title={"Payment Amount (ETH)"}
                   className={clsx("font-bold")}
                   value={data.principal}
                   onChangeCustom={(e) => addField("principal", e.target.value)}
                 />
-
                 <InputText
                   type="number"
-                  name="payment"
-                  placeholder="Repayment amount"
-                  // title={"Payment Amount (ETH)"}
+                  name="repayment"
+                  placeholder="Re-Payment Amount (ETH)"
+                  onChangeCustom={(e) => setData({...data, repaymentAmount: e.target.value})}
+                  // title={"Re-Payment Amount (ETH)"}
                   className={clsx("font-bold")}
                   value={data.repaymentAmount}
                   onChangeCustom={(e) => addField("repaymentAmount", e.target.value)}
@@ -131,10 +151,20 @@ export const PoolFormComponent: React.FC = () => {
                   title="Payment Frequency"
                   // title={"Payment Frequency"}
                   // labelVisible
+                  onChangeCustom={(e) => setData({...data, frequency: e.target.value})}
                   className={clsx("font-bold")}
                   value={data.frequecy}
                   onChangeCustom={(e) => addField("frequecy", e.target.value)}
                 />
+                <InputDatePicker
+                  name="endDate"
+                  placeholder="Loan End Date"
+                  // title={"Loan End Date"}
+                  setValues={setLoanEndDate}
+                  value={loanEndDate}
+                  className={clsx("font-bold")}
+                />
+
                 <div className={clsx("flex justify-center ")}>
                   <Button
                     labelProps={clsx("font-bold")}
@@ -148,7 +178,6 @@ export const PoolFormComponent: React.FC = () => {
                     }
                     // type="submit"
                     disabled={isLoading}
-                    onClick={onSubmit}
                   />
                 </div>
               </form>

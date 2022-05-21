@@ -29,7 +29,10 @@ export const Input: React.FC<InputProps & React.InputHTMLAttributes<HTMLInputEle
   return (
     <div className={clsx("relative flex flex-col w-full", classNameContainer)}>
       <div className={clsx(styles.input)}>
-        <Typography type="label" className={clsx({"text-status-error": error})}>
+        <Typography
+          type="label"
+          className={clsx({ "text-status-error": error })}
+        >
           {title}
         </Typography>
 
@@ -49,18 +52,18 @@ export const Input: React.FC<InputProps & React.InputHTMLAttributes<HTMLInputEle
               "border-status-error placeholder-status-error text-status-error":
                 error && !colorErrorHide,
             },
-            {[`${styles.marginInput}`]: !error},
-            {"px-4": !leftImg && !rightImg},
-            {"pl-9 pr-4": leftImg},
-            {"pr-9 pl-4": rightImg},
+            { [`${styles.marginInput}`]: !error },
+            { "px-4": !leftImg && !rightImg },
+            { "pl-9 pr-4": leftImg },
+            { "pr-9 pl-4": rightImg },
 
-            {"bg-transparent border-gray-500 ": !isFill},
+            { "bg-transparent border-gray-500 ": !isFill },
             {
               "bg-transparent-color-gray-200 border-color1": isFill && !error,
             },
             !!isFill && styles.inputDateWithValue,
             styles.inputStyles,
-            "py-3 placeholder-gray-500 mt-2 w-full text-gray-200 f-17 border rounded-md",
+            "py-3 placeholder-color1 mt-2 w-full text-color1 f-17 border rounded-md",
             "disabled:placeholder-gray-800 disabled:bg-gray-200 disabled:cursor-not-allowed disabled:text-gray-800",
             "focus:outline-none focus:bg-transparent focus:ring-offset-transparent focus:ring-opacity-0 focus:border-gray-5 focus:ring-white"
           )}
