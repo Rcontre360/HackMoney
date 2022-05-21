@@ -42,7 +42,7 @@ const Table = () => {
       dao: "Dao1",
       pool: { value: "Pool1", id: 1 },
       tokens_symbol: "DAO1TK",
-      tokens_saved: "DAO1TK",
+      tokens_saved: 40000,
       loan_created: 450,
       token_usd: "320USD",
     },
