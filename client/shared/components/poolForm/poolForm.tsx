@@ -8,15 +8,18 @@ import Styles from "./styles.module.scss";
 import { SelectInputForm } from "../common/form/select/SelectInputForm";
 import { InputDatePicker } from "../common/form/input-datepicker";
 
+import { createLoan } from "@shared/utils/protocol";
+
 export const PoolFormComponent: React.FC = () => {
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
   const [isLoadingWallet, setIsLoadingWallet] = React.useState<boolean>(false);
   const [web3, setWeb3] = React.useState(null);
   const [accounts, setAccounts] = React.useState(null);
   const [data, setData] = React.useState({
-    paymentRate: "",
-    rePaymentRate: "",
+    principal: "",
+    repaymentAmount: "",
     frequency: "",
+    borrower: "",
   });
   const [loanEndDate, setLoanEndDate] = React.useState("");
 
@@ -98,7 +101,8 @@ export const PoolFormComponent: React.FC = () => {
                   placeholder="Borrower *"
                   className={clsx("font-bold")}
                   // title={"Borrower"}
-
+                  // value={data.borrower}
+                  // onChange={(e) => addField("borrower", e.target.value)}
                   readOnly
                   value={
                     accounts !== null && accounts.length !== 0
@@ -106,26 +110,24 @@ export const PoolFormComponent: React.FC = () => {
                       : ""
                   }
                 />
-
+                <InputText
+                  type="number"
+                  name="payment"
+                  placeholder="Principal amount"
+                  onChangeCustom={(e) =>
+                    setData({ ...data, principal: e.target.value })
+                  }
+                  // title={"Payment Amount (ETH)"}
+                  className={clsx("font-bold")}
+                />
                 <InputText
                   type="number"
                   name="repayment"
                   placeholder="Re-Payment Amount (ETH)"
                   onChangeCustom={(e) =>
-                    setData({ ...data, rePaymentRate: e.target.value })
+                    setData({ ...data, repaymentAmount: e.target.value })
                   }
                   // title={"Re-Payment Amount (ETH)"}
-                  className={clsx("font-bold")}
-                />
-
-                <InputText
-                  type="number"
-                  name="payment"
-                  placeholder="Payment Amount (ETH)"
-                  onChangeCustom={(e) =>
-                    setData({ ...data, paymentRate: e.target.value })
-                  }
-                  // title={"Payment Amount (ETH)"}
                   className={clsx("font-bold")}
                 />
 
