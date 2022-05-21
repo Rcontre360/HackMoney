@@ -14,20 +14,32 @@ export const PoolFormComponent: React.FC = () => {
   const [isLoadingWallet, setIsLoadingWallet] = React.useState<boolean>(false);
   const [web3, setWeb3] = React.useState(null);
   const [accounts, setAccounts] = React.useState(null);
-  const [data, setData] = React.useState({
+  const [data, setData] = React.useState<{
+    principal: string;
+    repaymentAmount: string;
+    borrower: string;
+    frequecy: "per_day" | "per_week" | "per_month" | "per_year";
+  }>({
     principal: "",
     repaymentAmount: "",
-    frequecy: "",
+    frequecy: "per_month",
     borrower: "",
   });
 
   const onSubmit = async () => {
+    const day = 24 * 3600;
+    const secondsPerPayment = {
+      per_day: day,
+      per_week: 7 * day,
+      per_month: 30 * day,
+      per_year: 365 * day,
+    };
     const loan = {
       ...data,
       pool: "",
-      flowRate: 0,
+      flowRate: Number(data.repaymentAmount) / secondsPerPayment[data.frequecy],
     };
-    //await createLoan(loan,)
+    await createLoan(loan, "mumbai");
   };
 
   const addField = (key: keyof typeof data, value: string) => {};
@@ -84,7 +96,7 @@ export const PoolFormComponent: React.FC = () => {
                   // title={"Borrower"}
                   readOnly
                   value={data.borrower}
-                  onChange={(e) => addField("borrower", e.target.value)}
+                  onChangeCustom={(e) => addField("borrower", e.target.value)}
                 />
 
                 <InputText
@@ -94,7 +106,7 @@ export const PoolFormComponent: React.FC = () => {
                   // title={"Re-Payment Amount (ETH)"}
                   className={clsx("font-bold")}
                   value={data.principal}
-                  onChange={(e) => addField("principal", e.target.value)}
+                  onChangeCustom={(e) => addField("principal", e.target.value)}
                 />
 
                 <InputText
@@ -104,7 +116,7 @@ export const PoolFormComponent: React.FC = () => {
                   // title={"Payment Amount (ETH)"}
                   className={clsx("font-bold")}
                   value={data.repaymentAmount}
-                  onChange={(e) => addField("repaymentAmount", e.target.value)}
+                  onChangeCustom={(e) => addField("repaymentAmount", e.target.value)}
                 />
 
                 <SelectInputForm
@@ -121,7 +133,7 @@ export const PoolFormComponent: React.FC = () => {
                   // labelVisible
                   className={clsx("font-bold")}
                   value={data.frequecy}
-                  onChange={(e) => addField("frequecy", e.target.value)}
+                  onChangeCustom={(e) => addField("frequecy", e.target.value)}
                 />
                 <div className={clsx("flex justify-center ")}>
                   <Button

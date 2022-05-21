@@ -1,8 +1,7 @@
-import ethers, {BigNumberish, Signer} from "ethers";
+import ethers, {BigNumberish} from "ethers";
 
 import {getNetworkConfig} from "@shared/utils/network";
 import {attach, getLogs, getReceipt} from "@shared/utils/contracts";
-import {approveFlow} from "@shared/utils/superfluid";
 
 export const createLendingPool = async (network: string, token: string) => {
   const {addresses} = getNetworkConfig(network);
@@ -34,28 +33,26 @@ export type Loan = {
   borrower: string;
   pool: string;
 };
-export const createLoan = async (loan: Loan, dao: Signer, network: string) => {
+export const createLoan = async (loan: Loan, network: string) => {
   const {addresses} = getNetworkConfig(network);
   const host = await attach("Superfluid", addresses.host);
   const cfa = await attach("ConstantFlowAgreementV1", addresses.cfa);
   const lendingPool = await attach("LendingPool", loan.pool);
 
-  return await host
-    .connect(dao)
-    .callAgreement(
-      cfa.address,
-      cfa.interface.encodeFunctionData("createFlowByOperator", [
-        await lendingPool.token(),
-        loan.borrower,
-        lendingPool.address,
-        loan.flowRate,
-        [],
-      ]),
-      ethers.utils.defaultAbiCoder.encode(
-        ["address", "uint256", "uint256"],
-        [loan.borrower, loan.repaymentAmount, loan.principal]
-      )
-    );
+  return await host.callAgreement(
+    cfa.address,
+    cfa.interface.encodeFunctionData("createFlowByOperator", [
+      await lendingPool.token(),
+      loan.borrower,
+      lendingPool.address,
+      loan.flowRate,
+      [],
+    ]),
+    ethers.utils.defaultAbiCoder.encode(
+      ["address", "uint256", "uint256"],
+      [loan.borrower, loan.repaymentAmount, loan.principal]
+    )
+  );
 };
 
 //TODO add allowance of flowRate to loan
