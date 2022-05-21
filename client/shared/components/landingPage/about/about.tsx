@@ -16,14 +16,18 @@ export const About: React.FC = () => {
       <div className="md:w-1/2">
         <h1
           className={clsx(
-            "f-58 lh-80 font-extrabold text-white pb-5 text-secondary Lato"
+            "f-52 lh-80 font-extrabold text-white pb-5 text-secondary Lato"
           )}
         >
           About Us
         </h1>
-        <p className={clsx("f-24 font-thin text-secondary text-white")}>
+        <p className={clsx("f-24 pb-5 font-thin text-secondary text-white")}>
           ChainScore is a protocol for uncollateralized lending, powered by an
-          <span className="text-primary"> on-chain credit score</span>
+          <span className="text-primary"> on-chain credit score.</span>
+        </p>
+        <p className={clsx("f-24 font-thin text-secondary text-white")}>
+          Supporting <span className="text-primary">DAOs</span> and their
+          Ecosystems for them to thrive.
         </p>
       </div>
     </div>
@@ -34,52 +38,23 @@ export const About1: React.FC = () => {
   return (
     <div
       className={clsx(
-        "w-full flex relative h-full bg-white pt-20 items-center justify-center 2xl:px-32 xl:px-28 sm:px-10 gap-10"
+        "w-full flex relative h-full bg-white py-20 items-center justify-center 2xl:px-32 xl:px-28 sm:px-10 gap-10"
       )}
     >
-      <div className="md:w-1/2 flex items-center justify-center">
-        <img src="/icons/main.png" className="w-2/3" alt="" />
-      </div>
       <div className="md:w-1/2">
-        <h1
-          className={clsx(
-            "f-58 lh-80 font-extrabold text-white pb-5 text-secondary Lato"
-          )}
-        >
-          About Us
-        </h1>
-        <p className={clsx("f-24 font-thin text-secondary text-white")}>
-          ChainScore is a protocol for uncollateralized lending, powered by an
-          <span className="text-primary"> on-chain credit score</span>
+        <p className={clsx("f-24 font-thin pb-5 text-secondary text-white")}>
+          <span className="text-primary">Innovating </span>
+          driven by community needs.
         </p>
+        <p className={clsx("f-24 font-thin pb-5 text-secondary text-white")}>
+          <span className="text-primary">Building Resilience </span>
+          into the communities.
+        </p>
+      </div>
+      <div className="md:w-1/2 flex items-center justify-center">
+        <img src="/icons/investor.png" className="w-2/3" alt="" />
       </div>
     </div>
   );
 };
 
-export const About2: React.FC = () => {
-  return (
-    <div
-      className={clsx(
-        "w-full flex relative h-full bg-white py-20 items-center justify-center 2xl:px-32 xl:px-28 sm:px-10 gap-10"
-      )}
-    >
-      <div className="md:w-1/2 flex items-center justify-center">
-        <img src="/icons/main.png" className="w-2/3" alt="" />
-      </div>
-      <div className="md:w-1/2">
-        <h1
-          className={clsx(
-            "f-58 lh-80 font-extrabold text-white pb-5 text-secondary Lato"
-          )}
-        >
-          About Us
-        </h1>
-        <p className={clsx("f-24 font-thin text-secondary text-white")}>
-          ChainScore is a protocol for uncollateralized lending, powered by an
-          <span className="text-primary"> on-chain credit score</span>
-        </p>
-      </div>
-    </div>
-  );
-};
