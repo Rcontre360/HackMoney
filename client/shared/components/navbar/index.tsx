@@ -36,11 +36,12 @@ const Navbar = () => {
   return (
     <div className="navbar bg-color2 shadow-md text-neutral-content px-10 sticky top-0 z-50">
       <div className="flex flex-row gap-4 flex">
-        <div className="text-xl text-color1 f-24">
-          <Link className="" href="/">
+        <Link href="/app">
+          <div className="flex text-color1 gap-4">
+            <img src={"/icons/logo.png"} className="h-8 w-8" alt="" />
             ChainScore
-          </Link>
-        </div>
+          </div>
+        </Link>
         <ul className="menu menu-horizontal p-0">
           {MENU_ITEMS.map((k, i) => (
             <li

@@ -25,7 +25,7 @@ export const MainSection: React.FC = () => {
         </p>
         <div className={clsx("container-button w-full text-left mt-6")}>
           <Button
-            href="/selectCity"
+            href="/app"
             className={clsx("font-bold w-min whitespace-nowrap w-full")}
           >
             Earn with us
