@@ -1,5 +1,5 @@
 import {Framework} from "@superfluid-finance/sdk-core";
-import {BigNumberish, SignerWithAddress, Contract} from "ethers";
+import {BigNumberish, Contract} from "ethers";
 
 import {getNetworkConfig} from "@shared/utils/network";
 import {attach} from "@shared/utils/contracts";
@@ -9,12 +9,10 @@ export const createFlow = async ({
   superToken,
   receiver,
   flowRate,
-  sender,
   network,
 }: {
   superToken: Contract;
   receiver: string;
-  sender: SignerWithAddress;
   flowRate: BigNumberish;
   network: string;
 }) => {
@@ -27,7 +25,7 @@ export const createFlow = async ({
     flowRate,
     [],
   ]);
-  const receipt = await host.connect(sender).callAgreement(address.cfa, callData, "0x");
+  const receipt = await host.callAgreement(address.cfa, callData, "0x");
 
   return receipt;
 };
