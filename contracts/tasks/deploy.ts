@@ -6,7 +6,7 @@ import {createSuperToken} from "@utils/superfluid";
 import {deploy} from "@utils/contracts";
 import {LoanManager, LendingPool, ProtocolFactory} from "@sctypes/index";
 
-task("deploy:lending", "deploy lending protocol").setAction(async (taskArgs: Record<string, string>, hre) => {
+task("deploy:protocol", "deploy lending protocol").setAction(async (taskArgs: Record<string, string>, hre) => {
   const {ethers, network} = hre;
   const accounts = await ethers.getSigners();
 

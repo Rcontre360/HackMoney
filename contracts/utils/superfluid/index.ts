@@ -119,9 +119,10 @@ export const createSuperToken = async (
   const superTokenFactory = <SuperTokenFactory>(
     await attach(hre, "SuperTokenFactory", await host.getSuperTokenFactory())
   );
+  console.log({superTokenFactory: superTokenFactory.address});
   const superTokenAddress = await superTokenFactory.callStatic["createERC20Wrapper(address,uint8,string,string)"](
     token.address,
-    1,
+    0,
     "Super mock",
     "SMT",
   );
