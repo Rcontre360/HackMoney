@@ -3,7 +3,7 @@ import {BigNumberish, ethers} from "ethers";
 import {getNetworkConfig} from "@shared/utils/network";
 import {attach, getLogs, getReceipt} from "@shared/utils/contracts";
 
-export const createLendingPool = async (network: string, token: string) => {
+export const createLendingPool = async (token: string, network: string) => {
   const {addresses} = getNetworkConfig(network);
   const factory = await attach("ProtocolFactory", addresses.factory);
 
@@ -51,8 +51,8 @@ export const createLoan = async (loan: Loan, network?: string) => {
     ethers.utils.defaultAbiCoder.encode(
       ["address", "uint256", "uint256"],
       [loan.borrower, loan.repaymentAmount, loan.principal]
-    )
-    //{gasLimit: 600700}
+    ),
+    {gasLimit: 600700}
   );
 
   //return await host.callAgreement( //this should be called by dao after approval of flowRate

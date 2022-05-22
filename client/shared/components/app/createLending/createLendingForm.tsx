@@ -1,14 +1,14 @@
 import * as React from "react";
-import { Button } from "../../common/button";
-import { InputText } from "../../common/form/input-text";
+import {Button} from "../../common/button";
+import {InputText} from "../../common/form/input-text";
 // import { InputEmail } from "../common/form/input-email";
 import getWeb3 from "../../../getWeb3";
 import clsx from "clsx";
-import { useRouter } from "next/router";
+import {useRouter} from "next/router";
 
-import { attach } from "@shared/utils/contracts";
-import { createLoan } from "@shared/utils/protocol";
-import { getNetworkConfig } from "@shared/utils/network";
+import {attach} from "@shared/utils/contracts";
+import {createLendingPool} from "@shared/utils/protocol";
+import {getNetworkConfig} from "@shared/utils/network";
 
 export const CreateLendingComponent: React.FC = () => {
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
@@ -26,8 +26,9 @@ export const CreateLendingComponent: React.FC = () => {
   const onSubmit = async () => {
     setIsLoading(true);
     try {
+      await createLendingPool(data.tokenAddress, "mumbai"); //TODO hardcoded mumbai
     } catch (err) {
-      console.log({ err });
+      console.log({err});
     }
     setIsLoading(false);
   };
@@ -45,7 +46,6 @@ export const CreateLendingComponent: React.FC = () => {
       //setContract(contract);
       setAccounts(accounts);
       setIsLoadingWallet(false);
-      setData({ ...data, daoName: accounts[0] });
     } catch (error) {
       // Catch any errors for any of the above operations.
       alert(
@@ -66,21 +66,13 @@ export const CreateLendingComponent: React.FC = () => {
         "relative w-full flex flex-col items-center justify-center pt-20 min-h-screen"
       )}
     >
-      <div
-        className={clsx(
-          "relative flex sm:flex-row items-start justify-between "
-        )}
-      >
+      <div className={clsx("relative flex sm:flex-row items-start justify-between ")}>
         <div className={clsx("bg-gray-4 rounded-10 shadow-generic")}>
           <div className={clsx("w-full")}>
             <div className="  ">
               <div>
-                <h4
-                  className={clsx(
-                    "f-24 text-center text-color1 font-bold mb-2"
-                  )}
-                >
-                  Create Loan Detail
+                <h4 className={clsx("f-24 text-center text-color1 font-bold mb-2")}>
+                  Create Lending Pool
                 </h4>
               </div>
 
@@ -94,16 +86,12 @@ export const CreateLendingComponent: React.FC = () => {
                   // onChange={(e) => addField("borrower", e.target.value)}
 
                   value={data.daoName}
-                  onChangeCustom={(e) =>
-                    setData({ ...data, daoName: e.target.value })
-                  }
+                  onChangeCustom={(e) => setData({...data, daoName: e.target.value})}
                 />
                 <InputText
                   name="tokenAddress"
                   placeholder="Token Address"
-                  onChangeCustom={(e) =>
-                    setData({ ...data, tokenAddress: e.target.value })
-                  }
+                  onChangeCustom={(e) => setData({...data, tokenAddress: e.target.value})}
                   // title={"Payment Amount (ETH)"}
                   className={clsx("font-bold")}
                   value={data.tokenAddress}
@@ -117,8 +105,8 @@ export const CreateLendingComponent: React.FC = () => {
                       isLoading
                         ? undefined
                         : () => {
-                            onSubmit();
-                          }
+                          onSubmit();
+                        }
                     }
                     // type="submit"
                     disabled={isLoading}
