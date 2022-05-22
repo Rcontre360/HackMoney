@@ -2,7 +2,7 @@ import PoolDetailComponent from "@shared/components/app/poolDetail/poolDetail";
 import Layout from "@shared/layout";
 // import React from "react";
 
-const PoolForm = () => {
+const PoolDetail = () => {
   return (
     <Layout>
       <PoolDetailComponent />
@@ -10,4 +10,4 @@ const PoolForm = () => {
   );
 };
 
-export default PoolForm;
+export default PoolDetail;

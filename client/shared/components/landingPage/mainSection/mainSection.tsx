@@ -7,7 +7,7 @@ export const MainSection: React.FC = () => {
   return (
     <div
       className={clsx(
-        "w-full flex relative h-full min-h-screen pt-20 items-center justify-center 2xl:px-32 xl:px-28 sm:px-10 gap-10"
+        "w-full flex md:flex-row flex-col md:text-left text-center relative h-full min-h-screen pt-20 items-center justify-center 2xl:px-32 xl:px-28 sm:px-10 px-6 gap-10"
       )}
     >
       <div className="md:w-1/2">
@@ -23,7 +23,11 @@ export const MainSection: React.FC = () => {
           Get your on-chain score and get truely trustworthy uncollateralized
           loans for <span className="text-color1">DAOs</span>
         </p>
-        <div className={clsx("container-button w-full text-left mt-6")}>
+        <div
+          className={clsx(
+            "container-button w-full md:text-left text-center mt-6 md:mb-0 mb-6"
+          )}
+        >
           <Button
             href="/app"
             className={clsx("font-bold w-min whitespace-nowrap w-full")}
@@ -32,7 +36,7 @@ export const MainSection: React.FC = () => {
           </Button>
         </div>
       </div>
-      <div className="md:w-1/2 flex items-center justify-center">
+      <div className="md:w-1/2 md:flex hidden items-center justify-center">
         <img src="/icons/logo.png" className="w-1/2" alt="" />
       </div>
     </div>

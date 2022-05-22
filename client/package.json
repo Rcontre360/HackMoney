@@ -9,6 +9,7 @@
     "@date-io/date-fns": "^2.13.2",
     "@emotion/react": "^11.9.0",
     "@emotion/styled": "^11.8.1",
+    "@headlessui/react": "^1.6.2",
     "@heroicons/react": "^1.0.6",
     "@metamask/detect-provider": "^1.2.0",
     "@mui/icons-material": "^5.8.0",

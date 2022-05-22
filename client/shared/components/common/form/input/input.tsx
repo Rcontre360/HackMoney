@@ -31,7 +31,7 @@ export const Input: React.FC<InputProps & React.InputHTMLAttributes<HTMLInputEle
       <div className={clsx(styles.input)}>
         <Typography
           type="label"
-          className={clsx({ "text-status-error": error })}
+          className={clsx("text-white", { "text-status-error": error })}
         >
           {title}
         </Typography>
