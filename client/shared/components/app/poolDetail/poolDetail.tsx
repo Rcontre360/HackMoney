@@ -8,7 +8,7 @@ import clsx from "clsx";
 import {attach} from "@shared/utils/contracts";
 
 const PoolDetailComponent: React.FunctionComponent<{}> = () => {
-  const [rows, setRows] = React.useState();
+  const [rows, setRows] = React.useState<any[]>([]);
   const {query} = useRouter();
 
   const poolDetail = {
@@ -31,49 +31,26 @@ const PoolDetailComponent: React.FunctionComponent<{}> = () => {
       process.env.NEXT_PUBLIC_MUMBAI_PROVIDER
     ); //TODO hardcoded mumbai
     const numLoans = await manager.loanId();
-    const loans = await Promise.all(new Array(numLoans.toNumber()).map((a, i) => manager.loans(i)));
+    const loans = await Promise.all(
+      new Array(numLoans.toNumber()).fill(0).map((a, i) => manager.loans(i))
+    );
 
-    console.log({loans, numLoans});
+    setRows(
+      loans.map((loan) => ({
+        principal: loan.principal.toString(),
+        flowRate: `${loan.flowRate.toString()}/second`,
+        repaymentAmount: loan.repaymentAmount.toString(),
+        startDate: new Date(loan.startDate * 1000).toLocaleString(),
+        status: loan.status == 0 ? "Issued" : loan.status == 1 ? "Paid" : "Defaulted",
+        borrower: loan.borrower,
+      }))
+    );
   };
 
   React.useEffect(() => {
     getRows();
   }, []);
 
-  const body = [
-    {
-      principal: "1000",
-      repaymentAmount: 15000,
-      flowRate: "100 / month",
-      startDate: "2022/21/05",
-      borrower: "0x11255031BdD1AC96C4FC5B1274e3E9ba6166b358",
-      status: "waiting for payment",
-    },
-    {
-      principal: "1000",
-      repaymentAmount: 15000,
-      flowRate: "100 / month",
-      startDate: "2022/21/05",
-      borrower: "0x11255031BdD1AC96C4FC5B1274e3E9ba6166b358",
-      status: "waiting for payment",
-    },
-    {
-      principal: "1000",
-      repaymentAmount: 15000,
-      flowRate: "100 / month",
-      startDate: "2022/21/05",
-      borrower: "0x11255031BdD1AC96C4FC5B1274e3E9ba6166b358",
-      status: "waiting for payment",
-    },
-    {
-      principal: "1000",
-      repaymentAmount: 15000,
-      flowRate: "100 / month",
-      startDate: "2022/21/05",
-      borrower: "0x11255031BdD1AC96C4FC5B1274e3E9ba6166b358",
-      status: "waiting for payment",
-    },
-  ];
   return (
     <div className="flex flex-col items-center bg-color2 min-h-screen px-16 pt-8">
       <div className="flex w-full justify-between">
@@ -104,7 +81,7 @@ const PoolDetailComponent: React.FunctionComponent<{}> = () => {
         </div>
       </div>
       <div className="w-full text-center">
-        <TablePool body={body} />
+        <TablePool body={rows} />
       </div>
     </div>
   );

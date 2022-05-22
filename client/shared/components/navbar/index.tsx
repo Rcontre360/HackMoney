@@ -36,7 +36,7 @@ const Navbar = () => {
   return (
     <div className="navbar bg-color2 shadow-md text-neutral-content px-10 sticky top-0 z-50">
       <div className="flex flex-row gap-4">
-        <Link href="/app">
+        <Link href="/">
           <div className="flex items-center cursor-pointer text-color1 gap-4">
             <img src={"/icons/logo.png"} className="h-8 w-8" alt="" />
             ChainScore
@@ -44,10 +44,7 @@ const Navbar = () => {
         </Link>
         <ul className="menu menu-horizontal p-0">
           {MENU_ITEMS.map((k, i) => (
-            <li
-              key={i}
-              className="text-white hover:text-color1 hover:bg-color2 rounded"
-            >
+            <li key={i} className="text-white hover:text-color1 hover:bg-color2 rounded">
               <Link href={k.url}>{k.title}</Link>
             </li>
           ))}
@@ -68,20 +65,12 @@ const Navbar = () => {
                   }}
                 />
                 <div>
-                  <p className="text-black text-sm overflow-hidden text-ellipsis w-36">
-                    {account}
-                  </p>
-                  <p className="text-color1 text-sm w-auto">
-                    Connected to Rinkeby
-                  </p>
+                  <p className="text-black text-sm overflow-hidden text-ellipsis w-36">{account}</p>
+                  <p className="text-color1 text-sm w-auto">Connected to Rinkeby</p>
                 </div>
               </div>
             ) : (
-              <Button
-                className="gradient"
-                sx={{ my: 2 }}
-                onClick={connectWallet}
-              >
+              <Button className="gradient" sx={{ my: 2 }} onClick={connectWallet}>
                 <span>Connect Wallet</span>
               </Button>
             )}
