@@ -4,7 +4,9 @@ import { InputText } from "../../common/form/input-text";
 // import { InputEmail } from "../common/form/input-email";
 import getWeb3 from "../../../getWeb3";
 import clsx from "clsx";
-import Styles from "./styles.module.scss";
+import { useRouter } from "next/router";
+
+import { attach } from "@shared/utils/contracts";
 import { createLoan } from "@shared/utils/protocol";
 import { getNetworkConfig } from "@shared/utils/network";
 
@@ -14,20 +16,19 @@ export const CreateLendingComponent: React.FC = () => {
   const [web3, setWeb3] = React.useState(null);
   const [accounts, setAccounts] = React.useState(null);
   const [data, setData] = React.useState<{
-    principal: string;
-    repaymentAmount: string;
-    borrower: string;
-    frequecy: "per_day" | "per_week" | "per_month" | "per_year";
+    tokenAddress: string;
+    daoName: string;
   }>({
-    principal: "",
-    repaymentAmount: "",
-    frequecy: "per_month",
-    borrower: "",
+    tokenAddress: "",
+    daoName: "",
   });
-  const [loanEndDate, setLoanEndDate] = React.useState("");
 
   const onSubmit = async () => {
     setIsLoading(true);
+    try {
+    } catch (err) {
+      console.log({ err });
+    }
     setIsLoading(false);
   };
 
@@ -44,7 +45,7 @@ export const CreateLendingComponent: React.FC = () => {
       //setContract(contract);
       setAccounts(accounts);
       setIsLoadingWallet(false);
-      setData({ ...data, borrower: accounts[0] });
+      setData({ ...data, daoName: accounts[0] });
     } catch (error) {
       // Catch any errors for any of the above operations.
       alert(
@@ -79,65 +80,35 @@ export const CreateLendingComponent: React.FC = () => {
                     "f-24 text-center text-color1 font-bold mb-2"
                   )}
                 >
-                  Create Lending Pool
+                  Create Loan Detail
                 </h4>
               </div>
 
               <form className="w-80">
                 <InputText
-                  name="fullName"
-                  placeholder="Borrower *"
+                  name="daoName"
+                  placeholder="DAO Name"
                   className={clsx("font-bold")}
                   // title={"Borrower"}
                   // value={data.borrower}
                   // onChange={(e) => addField("borrower", e.target.value)}
-                  readOnly
-                  value={data.borrower}
+
+                  value={data.daoName}
                   onChangeCustom={(e) =>
-                    setData({ ...data, borrower: e.target.value })
+                    setData({ ...data, daoName: e.target.value })
                   }
                 />
                 <InputText
-                  type="number"
-                  name="payment"
-                  placeholder="Principal amount"
+                  name="tokenAddress"
+                  placeholder="Token Address"
                   onChangeCustom={(e) =>
-                    setData({ ...data, principal: e.target.value })
+                    setData({ ...data, tokenAddress: e.target.value })
                   }
                   // title={"Payment Amount (ETH)"}
                   className={clsx("font-bold")}
-                  value={data.principal}
-                />
-                <InputText
-                  type="number"
-                  name="repayment"
-                  placeholder="Re-Payment Amount (ETH)"
-                  onChangeCustom={(e) =>
-                    setData({ ...data, repaymentAmount: e.target.value })
-                  }
-                  // title={"Re-Payment Amount (ETH)"}
-                  className={clsx("font-bold")}
-                  value={data.repaymentAmount}
+                  value={data.tokenAddress}
                 />
 
-                <SelectInputForm
-                  arrayValues={[
-                    { value: "per_day", title: "Per Day" },
-                    { value: "per_week", title: "Per Week" },
-                    { value: "per_month", title: "Per Month" },
-                    { value: "per_year", title: "Per Year" },
-                  ]}
-                  type="number"
-                  name="paymentFrequency"
-                  title="Payment Frequency"
-                  // title={"Payment Frequency"}
-                  // labelVisible
-                  onChangeCustom={(e) =>
-                    setData({ ...data, frequency: e.target.value } as any)
-                  }
-                  className={clsx("font-bold")}
-                  value={data.frequecy}
-                />
                 <div className={clsx("flex justify-center ")}>
                   <Button
                     labelProps={clsx("font-bold")}

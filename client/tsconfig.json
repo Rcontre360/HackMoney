@@ -35,7 +35,7 @@
     "next-env.d.ts",
     "**/*.ts",
     "**/*.tsx"
-  ],
+, "shared/components/app/createLending/createLendingForm.tsx"  ],
   "exclude": [
     "node_modules"
   ]
