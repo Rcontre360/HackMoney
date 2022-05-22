@@ -10,7 +10,7 @@ export type PoolRow = {
   tokens_symbol: string;
   tokens_saved: number;
   loan_created: number;
-  token_usd: number;
+  token_usd: string;
   loan_manager: string;
 };
 
