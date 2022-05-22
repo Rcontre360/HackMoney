@@ -9,6 +9,7 @@ import {SelectInputForm} from "../common/form/select/SelectInputForm";
 import {InputDatePicker} from "../common/form/input-datepicker";
 
 import {createLoan} from "@shared/utils/protocol";
+import {getNetworkConfig} from "@shared/utils/network";
 
 export const PoolFormComponent: React.FC = () => {
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
@@ -28,10 +29,6 @@ export const PoolFormComponent: React.FC = () => {
   });
   const [loanEndDate, setLoanEndDate] = React.useState("");
 
-  React.useEffect(() => {
-    console.log(data, loanEndDate);
-  }, [data, loanEndDate]);
-
   const onSubmit = async () => {
     setIsLoading(true);
     const day = 24 * 3600;
@@ -46,7 +43,7 @@ export const PoolFormComponent: React.FC = () => {
       pool: "",
       flowRate: Number(data.repaymentAmount) / secondsPerPayment[data.frequecy],
     };
-    await createLoan(loan, "mumbai");
+    await createLoan(loan);
     setIsLoading(false);
   };
 
@@ -63,6 +60,7 @@ export const PoolFormComponent: React.FC = () => {
       //setContract(contract);
       setAccounts(accounts);
       setIsLoadingWallet(false);
+      setData({...data, borrower: accounts[0]});
     } catch (error) {
       // Catch any errors for any of the above operations.
       alert(
@@ -72,6 +70,10 @@ export const PoolFormComponent: React.FC = () => {
       setIsLoadingWallet(false);
     }
   };
+
+  React.useEffect(() => {
+    connectWallet();
+  }, []);
 
   return (
     <div
@@ -89,23 +91,6 @@ export const PoolFormComponent: React.FC = () => {
                 </h4>
               </div>
 
-              {(accounts == null || accounts.length === 0) && !isLoadingWallet && (
-                <div className={clsx("flex justify-center mb-2")}>
-                  <Button
-                    labelProps={clsx("font-bold")}
-                    label={"Connect Wallet"}
-                    onClick={
-                      isLoadingWallet
-                        ? undefined
-                        : () => {
-                          connectWallet();
-                        }
-                    }
-                    // type="submit"
-                    disabled={isLoadingWallet}
-                  />
-                </div>
-              )}
               <form className="w-80">
                 <InputText
                   name="fullName"
@@ -116,7 +101,7 @@ export const PoolFormComponent: React.FC = () => {
                   // onChange={(e) => addField("borrower", e.target.value)}
                   readOnly
                   value={data.borrower}
-                  onChangeCustom={(e) => addField("borrower", e.target.value)}
+                  onChangeCustom={(e) => setData({...data, borrower: e.target.value})}
                 />
                 <InputText
                   type="number"
@@ -126,7 +111,6 @@ export const PoolFormComponent: React.FC = () => {
                   // title={"Payment Amount (ETH)"}
                   className={clsx("font-bold")}
                   value={data.principal}
-                  onChangeCustom={(e) => addField("principal", e.target.value)}
                 />
                 <InputText
                   type="number"
@@ -136,7 +120,6 @@ export const PoolFormComponent: React.FC = () => {
                   // title={"Re-Payment Amount (ETH)"}
                   className={clsx("font-bold")}
                   value={data.repaymentAmount}
-                  onChangeCustom={(e) => addField("repaymentAmount", e.target.value)}
                 />
 
                 <SelectInputForm
@@ -151,20 +134,10 @@ export const PoolFormComponent: React.FC = () => {
                   title="Payment Frequency"
                   // title={"Payment Frequency"}
                   // labelVisible
-                  onChangeCustom={(e) => setData({...data, frequency: e.target.value})}
+                  onChangeCustom={(e) => setData({...data, frequency: e.target.value} as any)}
                   className={clsx("font-bold")}
                   value={data.frequecy}
-                  onChangeCustom={(e) => addField("frequecy", e.target.value)}
                 />
-                <InputDatePicker
-                  name="endDate"
-                  placeholder="Loan End Date"
-                  // title={"Loan End Date"}
-                  setValues={setLoanEndDate}
-                  value={loanEndDate}
-                  className={clsx("font-bold")}
-                />
-
                 <div className={clsx("flex justify-center ")}>
                   <Button
                     labelProps={clsx("font-bold")}

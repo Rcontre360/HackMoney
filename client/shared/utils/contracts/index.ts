@@ -1,4 +1,4 @@
-import ethers, {Contract, ContractTransaction} from "ethers";
+import {Contract, ContractTransaction, ethers} from "ethers";
 import {ContractReceipt} from "@ethersproject/contracts";
 import {LogDescription} from "@ethersproject/abi";
 

@@ -195,22 +195,12 @@ export const networkConfigs = {
       },
     },
   },
-  ganache: {
-    isActive: true,
-    enableMigrateBanner: false,
-    addresses: {
-      host: "0xe982E462b094850F12AF94d21D470e21bE9D0E9C",
-      cfa: "0x4849038BE95Fe6e42Da67c9edbE411709e9C6780",
-      ida: "0x5c4F7148f0BbC0328CB487f72b2ba71a30895a36",
-      superTokenFactory: "0x24C72153a29E81d6D48c4F6CB20e204c249926d0",
-    },
-    nodes: {
-      defaultEth: "http://127.0.0.1:8545",
-    },
-    settings: {},
-  },
 };
 
-export function getNetworkConfig(type: string): any {
-  return networkConfigs[type as keyof typeof networkConfigs];
+export function getNetworkConfig(type?: string): any {
+  const networkId = (window as any).ethereum.networkVersion;
+
+  return type
+    ? networkConfigs[type as keyof typeof networkConfigs]
+    : Object.values(networkConfigs).find((cur) => cur.settings.chainId == networkId);
 }

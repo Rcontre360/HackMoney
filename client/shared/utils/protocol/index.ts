@@ -33,8 +33,9 @@ export type Loan = {
   borrower: string;
   pool: string;
 };
-export const createLoan = async (loan: Loan, network: string) => {
+export const createLoan = async (loan: Loan, network?: string) => {
   const {addresses} = getNetworkConfig(network);
+  console.log(addresses);
   const host = await attach("Superfluid", addresses.host);
   const cfa = await attach("ConstantFlowAgreementV1", addresses.cfa);
   const lendingPool = await attach("LendingPool", loan.pool);
