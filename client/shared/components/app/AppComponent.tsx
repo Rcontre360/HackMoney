@@ -14,8 +14,12 @@ const AppComponent: React.FunctionComponent<{}> = (props) => {
   const [rows, setRows] = React.useState<PoolRow[]>([]);
 
   const getLendingPools = async () => {
-    const {addresses} = getNetworkConfig("mumbai"); //TODO hardcoded mumbai
-    const factory = attach("ProtocolFactory", addresses.factory, process.env.MUMBAI_PROVIDER);
+    const { addresses } = getNetworkConfig("mumbai"); //TODO hardcoded mumbai
+    const factory = attach(
+      "ProtocolFactory",
+      addresses.factory,
+      process.env.NEXT_PUBLIC_MUMBAI_PROVIDER
+    );
     const lastId = (await factory.portfolioId()).toNumber();
     const rawPools = await Promise.all(
       new Array(lastId).fill(0).map((a, i) => factory.getPortfolio(i))
@@ -23,8 +27,16 @@ const AppComponent: React.FunctionComponent<{}> = (props) => {
     const pools: PoolRow[] = [];
 
     for (let i of rawPools) {
-      const pool = attach("LendingPool", i.pool, process.env.NEXT_PUBLIC_MUMBAI_PROVIDER); //TODO hardcoded mumbai
-      const token = attach("ERC20", await pool.token(), process.env.NEXT_PUBLIC_MUMBAI_PROVIDER); //TODO hardcoded mumbai
+      const pool = attach(
+        "LendingPool",
+        i.pool,
+        process.env.NEXT_PUBLIC_MUMBAI_PROVIDER
+      ); //TODO hardcoded mumbai
+      const token = attach(
+        "ERC20",
+        await pool.token(),
+        process.env.NEXT_PUBLIC_MUMBAI_PROVIDER
+      ); //TODO hardcoded mumbai
       const loanManager = attach(
         "LoanManager",
         await pool.loanManager(),
@@ -55,7 +67,7 @@ const AppComponent: React.FunctionComponent<{}> = (props) => {
   }, []);
 
   return (
-    <div className="flex flex-col items-center bg-color2">
+    <div className="flex flex-col items-center bg-color2 min-h-screen">
       <StadisticsBoard></StadisticsBoard>
       <div className="w-full text-center">
         <Table rows={rows} />
