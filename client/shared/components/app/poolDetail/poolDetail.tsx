@@ -1,22 +1,44 @@
 import React from "react";
+import {useRouter} from "next/router";
 import Table from "../table/table";
 import TablePool from "../table/tablePool";
-import { Button } from "@shared/components/common/button/button";
+import {Button} from "@shared/components/common/button/button";
 import clsx from "clsx";
 
+import {attach} from "@shared/utils/contracts";
+
 const PoolDetailComponent: React.FunctionComponent<{}> = () => {
+  const [rows, setRows] = React.useState();
+  const {query} = useRouter();
+
   const poolDetail = {
-    name: "Pool1",
-    id: 1,
+    name: `Pool #${query.factoryId}`,
+    id: query.factoryId,
     contract: {
-      value: "0x7A56a078da312bbfB5916CE118786f39cf6DF74z",
+      value: query.id,
       title: "Contract Address",
     },
     fields: [
-      { value: "10000", title: "Value (USD)" },
-      { value: "TKN", title: "Pool Token" },
+      {value: Number(query.tokens_saved) * Number(query.tokens_usd), title: "Value (USD)"},
+      {value: query.tokens_symbol, title: "Pool Token"},
     ],
   };
+
+  const getRows = async () => {
+    const manager = attach(
+      "LoanManager",
+      query.loan_manager as string,
+      process.env.NEXT_PUBLIC_MUMBAI_PROVIDER
+    ); //TODO hardcoded mumbai
+    const numLoans = await manager.loanId();
+    const loans = await Promise.all(new Array(numLoans.toNumber()).map((a, i) => manager.loans(i)));
+
+    console.log({loans, numLoans});
+  };
+
+  React.useEffect(() => {
+    getRows();
+  }, []);
 
   const body = [
     {
@@ -57,7 +79,7 @@ const PoolDetailComponent: React.FunctionComponent<{}> = () => {
       <div className="flex w-full justify-between">
         <h1 className="text-white f-48">{poolDetail.name}</h1>
         <Button
-          href={`/app/poolForm/${poolDetail.id}`}
+          href={`/app/poolForm/${poolDetail.contract.value}?token=${query.token}`}
           className={clsx("font-bold w-min whitespace-nowrap w-full")}
         >
           Propose a loan

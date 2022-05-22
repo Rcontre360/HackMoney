@@ -1,4 +1,4 @@
-import ethers, {BigNumberish} from "ethers";
+import {BigNumberish, ethers} from "ethers";
 
 import {getNetworkConfig} from "@shared/utils/network";
 import {attach, getLogs, getReceipt} from "@shared/utils/contracts";
@@ -32,18 +32,18 @@ export type Loan = {
   repaymentAmount: BigNumberish;
   borrower: string;
   pool: string;
+  token: string;
 };
 export const createLoan = async (loan: Loan, network?: string) => {
   const {addresses} = getNetworkConfig(network);
-  console.log(addresses);
-  const host = await attach("Superfluid", addresses.host);
-  const cfa = await attach("ConstantFlowAgreementV1", addresses.cfa);
-  const lendingPool = await attach("LendingPool", loan.pool);
+  const host = attach("Superfluid", addresses.host);
+  const cfa = attach("ConstantFlowAgreementV1", addresses.cfa);
+  const lendingPool = attach("LendingPool", loan.pool);
 
   return await host.callAgreement(
     cfa.address,
     cfa.interface.encodeFunctionData("createFlowByOperator", [
-      await lendingPool.token(),
+      loan.token,
       loan.borrower,
       lendingPool.address,
       loan.flowRate,
@@ -52,7 +52,8 @@ export const createLoan = async (loan: Loan, network?: string) => {
     ethers.utils.defaultAbiCoder.encode(
       ["address", "uint256", "uint256"],
       [loan.borrower, loan.repaymentAmount, loan.principal]
-    )
+    ),
+    {gasLimit: 200700}
   );
 };
 

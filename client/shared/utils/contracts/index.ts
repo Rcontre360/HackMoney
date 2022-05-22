@@ -5,13 +5,9 @@ import {LogDescription} from "@ethersproject/abi";
 import {getProvider} from "..";
 import abis from "./abis";
 
-export async function attach(
-  contractName: keyof typeof abis,
-  address: string,
-  customProvider?: string
-) {
+export function attach(contractName: keyof typeof abis, address: string, customProvider?: string) {
   const provider = getProvider(customProvider);
-  return new ethers.Contract(address, abis[contractName].abi, provider);
+  return new ethers.Contract(address, abis[contractName].abi, provider.getSigner());
 }
 
 export const getLogs = (contract: Contract, transaction: ContractReceipt) => {
