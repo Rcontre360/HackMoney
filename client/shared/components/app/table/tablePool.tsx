@@ -3,66 +3,16 @@ import clsx from "clsx";
 import Styles from "./styles.module.scss";
 import Link from "next/link";
 
-const Table = () => {
+const TablePool = ({ body }) => {
   const headers = [
-    "DAO Name",
-    "Pool",
-    "Token Symbol",
-    "Tokens Saved",
-    "Loans Created",
-    "Token/USD",
+    "Principal Payment",
+    "Re-Payment Amount",
+    "Flow Rate",
+    "Start Date",
+    "Borrower",
+    "Status",
   ];
 
-  const body = [
-    {
-      dao: "Dao1",
-      pool: { value: "Pool1", id: 1 },
-      tokens_symbol: "DAO1TK",
-      tokens_saved: 40000,
-      loan_created: 450,
-      token_usd: "320USD",
-    },
-    {
-      dao: "Dao1",
-      pool: { value: "Pool1", id: 1 },
-      tokens_symbol: "DAO1TK",
-      tokens_saved: 40000,
-      loan_created: 450,
-      token_usd: "320USD",
-    },
-    {
-      dao: "Dao1",
-      pool: { value: "Pool1", id: 1 },
-      tokens_symbol: "DAO1TK",
-      tokens_saved: 40000,
-      loan_created: 450,
-      token_usd: "320USD",
-    },
-    {
-      dao: "Dao1",
-      pool: { value: "Pool1", id: 1 },
-      tokens_symbol: "DAO1TK",
-      tokens_saved: 40000,
-      loan_created: 450,
-      token_usd: "320USD",
-    },
-    {
-      dao: "Dao1",
-      pool: { value: "Pool1", id: 1 },
-      tokens_symbol: "DAO1TK",
-      tokens_saved: 40000,
-      loan_created: 450,
-      token_usd: "320USD",
-    },
-    {
-      dao: "Dao1",
-      pool: { value: "Pool1", id: 1 },
-      tokens_symbol: "DAO1TK",
-      tokens_saved: 40000,
-      loan_created: 450,
-      token_usd: "320USD",
-    },
-  ];
   return (
     <>
       <div
@@ -71,9 +21,7 @@ const Table = () => {
           Styles.containerTable
         )}
       >
-        <h2 className="text-left text-color1 mb-4 text-3xl">
-          ChainScore Lending
-        </h2>
+        <h2 className="text-left text-color1 mb-4 text-3xl">Loans</h2>
         <div className="overflow-x-auto w-full">
           <div className="align-middle inline-block w-full">
             <div className="shadow sm:rounded-lg w-full">
@@ -95,27 +43,22 @@ const Table = () => {
                     return (
                       <tr className="border border-gray-300">
                         <td className="px-6 py-10 whitespace-nowrap text-white f-18">
-                          {item.dao}
+                          {item.principal}
                         </td>
-                        <td className="px-6 py-10 whitespace-nowrap text-color1 f-20 text-center">
-                          <Link
-                            href={`/app/pool/${item.pool.id}`}
-                            className="whitespace-nowrap"
-                          >
-                            {item.pool.value}
-                          </Link>
+                        <td className="px-6 py-10 whitespace-nowrap text-white f-20 text-center">
+                          {item.repaymentAmount}
                         </td>
                         <td className="px-6 py-10 whitespace-nowrap text-white f-18 text-center">
-                          {item.tokens_symbol}
+                          {item.flowRate}
                         </td>
                         <td className="px-6 py-10 whitespace-nowrap text-white f-18 text-center">
-                          {item.tokens_saved}
+                          {item.startDate}
                         </td>
                         <td className="px-6 py-10 whitespace-nowrap text-white f-18 text-center">
-                          {item.loan_created}
+                          {item.borrower}
                         </td>
                         <td className="px-6 py-10 whitespace-nowrap text-white f-18 text-center">
-                          {item.token_usd}
+                          {item.status}
                         </td>
                       </tr>
                     );
@@ -130,4 +73,4 @@ const Table = () => {
   );
 };
 
-export default Table;
+export default TablePool;
