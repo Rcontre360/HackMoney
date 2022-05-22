@@ -1,5 +1,5 @@
 export const MENU_ITEMS = [
-  { title: "Create DAO", url: "/app/createdao" },
+  // { title: "Create DAO", url: "/app/createdao" },
   { title: "Create Lending Pool", url: "/app/createLending" },
 ];
 

@@ -57,7 +57,6 @@ const AppComponent: React.FunctionComponent<{}> = (props) => {
         },
       });
     }
-    console.log(pools);
 
     setRows(pools);
   };
