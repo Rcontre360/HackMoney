@@ -4,13 +4,15 @@ import clsx from "clsx";
 import Navbar from "../components/navbar";
 import Styles from "./styles.module.scss";
 
+import {getProvider} from "@shared/utils/index";
+
 interface Props {}
 
-const Layout: React.FunctionComponent<Props> = ({ children }) => {
+const Layout: React.FunctionComponent<Props> = ({children}) => {
   return (
     <div className={clsx(Styles.containerAll, "bg-color2")}>
       <Navbar />
-      <div style={{ scrollBehavior: "smooth" }}>{children}</div>
+      <div style={{scrollBehavior: "smooth"}}>{children}</div>
     </div>
   );
 };

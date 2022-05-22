@@ -7,7 +7,11 @@ import abis from "./abis";
 
 export function attach(contractName: keyof typeof abis, address: string, customProvider?: string) {
   const provider = getProvider(customProvider);
-  return new ethers.Contract(address, abis[contractName].abi, provider.getSigner());
+  return new ethers.Contract(
+    address,
+    abis[contractName].abi,
+    customProvider ? provider : provider.getSigner()
+  );
 }
 
 export const getLogs = (contract: Contract, transaction: ContractReceipt) => {
