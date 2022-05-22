@@ -42,9 +42,8 @@ export const createLoan = async (loan: Loan, network?: string) => {
 
   return await host.callAgreement(
     cfa.address,
-    cfa.interface.encodeFunctionData("createFlowByOperator", [
+    cfa.interface.encodeFunctionData("createFlow", [
       loan.token,
-      loan.borrower,
       lendingPool.address,
       loan.flowRate,
       [],
@@ -52,9 +51,25 @@ export const createLoan = async (loan: Loan, network?: string) => {
     ethers.utils.defaultAbiCoder.encode(
       ["address", "uint256", "uint256"],
       [loan.borrower, loan.repaymentAmount, loan.principal]
-    ),
-    {gasLimit: 200700}
+    )
+    //{gasLimit: 600700}
   );
+
+  //return await host.callAgreement( //this should be called by dao after approval of flowRate
+  //cfa.address,
+  //cfa.interface.encodeFunctionData("createFlowByOperator", [
+  //loan.token,
+  //loan.borrower,
+  //lendingPool.address,
+  //loan.flowRate,
+  //[],
+  //]),
+  //ethers.utils.defaultAbiCoder.encode(
+  //["address", "uint256", "uint256"],
+  //[loan.borrower, loan.repaymentAmount, loan.principal]
+  //),
+  //{gasLimit: 200700}
+  //);
 };
 
 //TODO add allowance of flowRate to loan

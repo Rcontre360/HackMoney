@@ -21,11 +21,13 @@ export const PoolFormComponent: React.FC = () => {
   const [data, setData] = React.useState<{
     principal: string;
     repaymentAmount: string;
+    repaymentUnits: string;
     borrower: string;
     frequecy: "per_day" | "per_week" | "per_month" | "per_year";
   }>({
     principal: "",
     repaymentAmount: "",
+    repaymentUnits: "",
     frequecy: "per_month",
     borrower: "",
   });
@@ -47,10 +49,7 @@ export const PoolFormComponent: React.FC = () => {
         ...data,
         pool: query.id as string,
         token: query.token as string,
-        flowRate: Math.floor(
-          (Number(data.repaymentAmount) * 10 ** (await token.decimals())) /
-          secondsPerPayment[data.frequecy]
-        ),
+        flowRate: String(Math.floor(10 ** (await token.decimals()))),
       };
       console.log(loan, await token.decimals());
       await createLoan(loan, "mumbai"); //TODO hardcoded mumbai
@@ -150,6 +149,15 @@ export const PoolFormComponent: React.FC = () => {
                   onChangeCustom={(e) => setData({...data, frequency: e.target.value} as any)}
                   className={clsx("font-bold")}
                   value={data.frequecy}
+                />
+                <InputText
+                  type="number"
+                  name="repayment"
+                  placeholder="Repayment units"
+                  onChangeCustom={(e) => setData({...data, repaymentUnits: e.target.value})}
+                  // title={"Re-Payment Amount (ETH)"}
+                  className={clsx("font-bold")}
+                  value={data.repaymentUnits}
                 />
                 <div className={clsx("flex justify-center ")}>
                   <Button

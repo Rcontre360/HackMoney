@@ -34,9 +34,9 @@ const AppComponent: React.FunctionComponent<{}> = (props) => {
       pools.push({
         token: token.address,
         tokens_symbol: await token.symbol(),
-        tokens_saved: (await token.balanceOf(pool.address)).toNumber(),
+        tokens_saved: (await token.balanceOf(pool.address)).toString(),
         token_usd: randomIntFromInterval(1, 200),
-        loan_created: (await loanManager.loanId()).toNumber(),
+        loan_created: (await loanManager.loanId()).toString(),
         dao: i.manager,
         loan_manager: loanManager.address,
         pool: {
