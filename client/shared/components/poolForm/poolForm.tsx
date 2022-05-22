@@ -7,7 +7,9 @@ import clsx from "clsx";
 import Styles from "./styles.module.scss";
 import {SelectInputForm} from "../common/form/select/SelectInputForm";
 import {InputDatePicker} from "../common/form/input-datepicker";
+import {useRouter} from "next/router";
 
+import {attach} from "@shared/utils/contracts";
 import {createLoan} from "@shared/utils/protocol";
 import {getNetworkConfig} from "@shared/utils/network";
 
@@ -28,22 +30,33 @@ export const PoolFormComponent: React.FC = () => {
     borrower: "",
   });
   const [loanEndDate, setLoanEndDate] = React.useState("");
+  const {query} = useRouter();
 
   const onSubmit = async () => {
     setIsLoading(true);
-    const day = 24 * 3600;
-    const secondsPerPayment = {
-      per_day: day,
-      per_week: 7 * day,
-      per_month: 30 * day,
-      per_year: 365 * day,
-    };
-    const loan = {
-      ...data,
-      pool: "",
-      flowRate: Number(data.repaymentAmount) / secondsPerPayment[data.frequecy],
-    };
-    await createLoan(loan);
+    try {
+      const token = attach("ERC20", query.token as string);
+      const day = 24 * 3600;
+      const secondsPerPayment = {
+        per_day: day,
+        per_week: 7 * day,
+        per_month: 30 * day,
+        per_year: 365 * day,
+      };
+      const loan = {
+        ...data,
+        pool: query.id as string,
+        token: query.token as string,
+        flowRate: Math.floor(
+          (Number(data.repaymentAmount) * 10 ** (await token.decimals())) /
+          secondsPerPayment[data.frequecy]
+        ),
+      };
+      console.log(loan, await token.decimals());
+      await createLoan(loan, "mumbai"); //TODO hardcoded mumbai
+    } catch (err) {
+      console.log({err});
+    }
     setIsLoading(false);
   };
 

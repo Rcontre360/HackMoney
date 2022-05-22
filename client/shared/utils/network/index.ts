@@ -124,9 +124,9 @@ export const networkConfigs = {
       superTokenFactory: "0x200657E2f123761662567A1744f9ACAe50dF47E6",
       oracle: "0x72bF93FdAf53300D9bEA44b856f9Bd76e4C1e10f",
       link: "0x326C977E6efc84E512bB9C30f76E30c160eD06FB",
-      factory: "0x17Df649D7BE73fC8d0bB91450ed584F472e53b53",
-      lendingPoolImpl: "0xC43215D7614d5c20e07d8B074C588DcB3c90B9b2",
-      loanManagerImpl: "0x04556a619db52D372ddE069AA4fAbdC4Fb98BF34",
+      factory: "0x2cccF008765A24327Bb7732329935Ada6515341D",
+      lendingPoolImpl: "0x0d7FE38754965516e3873b42D31C5b71BEc798D9",
+      loanManagerImpl: "0xb1F0342681B9b4BEaBCA647e780458D6A60310C2",
       resolver: "0x8C54C83FbDe3C59e59dd6E324531FB93d4F504d3",
     },
     nodes: {
